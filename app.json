@@ -1,0 +1,17 @@
+{
+  "name": "expots",
+  "displayName": "expots",
+  "expo": {
+    "name": "expots",
+    "slug": "expots",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
