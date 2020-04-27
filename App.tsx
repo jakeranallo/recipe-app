@@ -1,19 +1,7 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { YellowBox } from 'react-native';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-    </View>
-  );
-}
+import App from './src';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+YellowBox.ignoreWarnings(['Remote debugger is in a background tab']);
+
+export default App;
