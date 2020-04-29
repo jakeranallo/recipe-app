@@ -2,52 +2,243 @@
 ### Do not make changes to this file directly
 
 
-type Mutation {
-  createDraft(authorEmail: String, content: String, title: String!): Post!
-  deleteOnePost(where: PostWhereUniqueInput!): Post
-  publish(id: Int): Post
-  signupUser(data: UserCreateInput!): User!
-}
-
-type Post {
-  author: User
-  authorId: Int
-  content: String
+type Ingredient {
+  amount: String
+  category: String
   id: Int!
-  published: Boolean!
-  title: String!
+  name: String!
+  recipe: Recipe
+  recipeId: Int
 }
 
-input PostCreateManyWithoutAuthorInput {
-  connect: [PostWhereUniqueInput!]
-  create: [PostCreateWithoutAuthorInput!]
+input IngredientCreateManyWithoutRecipeInput {
+  connect: [IngredientWhereUniqueInput!]
+  create: [IngredientCreateWithoutRecipeInput!]
 }
 
-input PostCreateWithoutAuthorInput {
-  content: String
-  published: Boolean
-  title: String!
+input IngredientCreateWithoutRecipeInput {
+  amount: String
+  category: String
+  name: String!
 }
 
-input PostWhereUniqueInput {
+input IngredientWhereUniqueInput {
   id: Int
 }
 
+type Mutation {
+  createOneRecipe(data: RecipeCreateInput!): Recipe!
+  createRecipe(createdAt: String, description: String, difficulty: String, title: String!, userEmail: String): Recipe!
+  signupUser(data: UserCreateInput!): User!
+  updateRecipe(id: Int): Recipe
+}
+
 type Query {
-  feed: [Post!]!
-  filterPosts(searchString: String): [Post!]!
-  post(where: PostWhereUniqueInput!): Post
+  allRecipes: [Recipe!]!
+  allUsers: [User!]!
+  beginnerRecipes: [Recipe!]!
+  recipe(where: RecipeWhereUniqueInput!): Recipe
+  searchRecipes(searchString: String): [Recipe!]!
+  user(where: UserWhereUniqueInput!): User
+}
+
+type Recipe {
+  createdAt: String
+  description: String
+  difficulty: String
+  id: Int!
+  imgOne: String
+  imgThree: String
+  imgTwo: String
+  ingredients: [Ingredient!]!
+  results: [Result!]!
+  title: String!
+  user: User
+  userId: Int
+}
+
+input RecipeCreateInput {
+  createdAt: String
+  description: String
+  difficulty: String
+  imgOne: String
+  imgThree: String
+  imgTwo: String
+  ingredients: IngredientCreateManyWithoutRecipeInput
+  results: ResultCreateManyWithoutRecipeInput
+  step: StepCreateManyWithoutRecipeInput
+  title: String!
+  user: UserCreateOneWithoutRecipesInput
+}
+
+input RecipeCreateManyWithoutUserInput {
+  connect: [RecipeWhereUniqueInput!]
+  create: [RecipeCreateWithoutUserInput!]
+}
+
+input RecipeCreateOneWithoutResultsInput {
+  connect: RecipeWhereUniqueInput
+  create: RecipeCreateWithoutResultsInput
+}
+
+input RecipeCreateWithoutResultsInput {
+  createdAt: String
+  description: String
+  difficulty: String
+  imgOne: String
+  imgThree: String
+  imgTwo: String
+  ingredients: IngredientCreateManyWithoutRecipeInput
+  step: StepCreateManyWithoutRecipeInput
+  title: String!
+  user: UserCreateOneWithoutRecipesInput
+}
+
+input RecipeCreateWithoutUserInput {
+  createdAt: String
+  description: String
+  difficulty: String
+  imgOne: String
+  imgThree: String
+  imgTwo: String
+  ingredients: IngredientCreateManyWithoutRecipeInput
+  results: ResultCreateManyWithoutRecipeInput
+  step: StepCreateManyWithoutRecipeInput
+  title: String!
+}
+
+input RecipeWhereUniqueInput {
+  id: Int
+}
+
+type Resource {
+  id: Int!
+  src: String!
+  step: Step
+  stepId: Int
+  title: String!
+}
+
+input ResourceCreateManyWithoutStepInput {
+  connect: [ResourceWhereUniqueInput!]
+  create: [ResourceCreateWithoutStepInput!]
+}
+
+input ResourceCreateWithoutStepInput {
+  src: String!
+  title: String!
+}
+
+input ResourceWhereUniqueInput {
+  id: Int
+}
+
+type Result {
+  id: Int!
+  img: String!
+  recipe: Recipe
+  recipeId: Int
+  user: User
+  userId: Int
+}
+
+input ResultCreateManyWithoutRecipeInput {
+  connect: [ResultWhereUniqueInput!]
+  create: [ResultCreateWithoutRecipeInput!]
+}
+
+input ResultCreateManyWithoutUserInput {
+  connect: [ResultWhereUniqueInput!]
+  create: [ResultCreateWithoutUserInput!]
+}
+
+input ResultCreateWithoutRecipeInput {
+  img: String!
+  user: UserCreateOneWithoutResultsInput
+}
+
+input ResultCreateWithoutUserInput {
+  img: String!
+  recipe: RecipeCreateOneWithoutResultsInput
+}
+
+input ResultWhereUniqueInput {
+  id: Int
+}
+
+type Step {
+  description: String
+  duration: String
+  id: Int!
+  recipe: Recipe
+  recipeId: Int
+  src: String
+  title: String!
+}
+
+input StepCreateManyWithoutRecipeInput {
+  connect: [StepWhereUniqueInput!]
+  create: [StepCreateWithoutRecipeInput!]
+}
+
+input StepCreateWithoutRecipeInput {
+  description: String
+  duration: String
+  resource: ResourceCreateManyWithoutStepInput
+  src: String
+  title: String!
+}
+
+input StepWhereUniqueInput {
+  id: Int
 }
 
 type User {
+  avatar: String
   email: String!
+  firstName: String!
   id: Int!
-  name: String
-  posts: [Post!]!
+  lastName: String!
+  recipes: [Recipe!]!
+  results: [Result!]!
 }
 
 input UserCreateInput {
+  avatar: String
   email: String!
-  name: String
-  posts: PostCreateManyWithoutAuthorInput
+  firstName: String!
+  lastName: String!
+  recipes: RecipeCreateManyWithoutUserInput
+  results: ResultCreateManyWithoutUserInput
+}
+
+input UserCreateOneWithoutRecipesInput {
+  connect: UserWhereUniqueInput
+  create: UserCreateWithoutRecipesInput
+}
+
+input UserCreateOneWithoutResultsInput {
+  connect: UserWhereUniqueInput
+  create: UserCreateWithoutResultsInput
+}
+
+input UserCreateWithoutRecipesInput {
+  avatar: String
+  email: String!
+  firstName: String!
+  lastName: String!
+  results: ResultCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutResultsInput {
+  avatar: String
+  email: String!
+  firstName: String!
+  lastName: String!
+  recipes: RecipeCreateManyWithoutUserInput
+}
+
+input UserWhereUniqueInput {
+  email: String
+  id: Int
 }

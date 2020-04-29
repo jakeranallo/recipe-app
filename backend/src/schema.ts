@@ -5,51 +5,130 @@ const User = objectType({
   name: 'User',
   definition(t) {
     t.model.id()
-    t.model.name()
+    t.model.firstName()
+    t.model.lastName()
+    t.model.avatar()
     t.model.email()
-    t.model.posts({
+    t.model.recipes({
+      pagination: false,
+    })
+    t.model.results({
       pagination: false,
     })
   },
 })
 
-const Post = objectType({
-  name: 'Post',
+const Recipe = objectType({
+  name: 'Recipe',
   definition(t) {
     t.model.id()
     t.model.title()
-    t.model.content()
-    t.model.published()
-    t.model.author()
-    t.model.authorId()
+    t.model.description()
+    t.model.createdAt()
+    t.model.difficulty()
+    t.model.imgOne()
+    t.model.imgTwo()
+    t.model.imgThree()
+    t.model.userId()
+    t.model.user()
+    t.model.ingredients({
+      pagination: false,
+    })
+    t.model.results({
+      pagination: false,
+    })
   },
 })
+
+const Result = objectType({
+  name: 'Result',
+  definition(t) {
+    t.model.id()
+    t.model.img()
+    t.model.recipeId()
+    t.model.recipe()
+    t.model.userId()
+    t.model.user()
+  },
+})
+
+const Resource = objectType({
+  name: 'Resource',
+  definition(t) {
+    t.model.id()
+    t.model.src()
+    t.model.stepId()
+    t.model.step()
+    t.model.title()
+  },
+})
+
+const Ingredient = objectType({
+  name: 'Ingredient',
+  definition(t) {
+    t.model.id()
+    t.model.category()
+    t.model.name()
+    t.model.amount()
+    t.model.recipeId()
+    t.model.recipe()
+  },
+})
+
+const Step = objectType({
+  name: 'Step',
+  definition(t) {
+    t.model.id()
+    t.model.title()
+    t.model.description()
+    t.model.duration()
+    t.model.src()
+    t.model.recipeId()
+    t.model.recipe()
+  },
+})
+
 
 const Query = objectType({
   name: 'Query',
   definition(t) {
-    t.crud.post()
+    t.crud.recipe()
+    t.crud.user()
 
-    t.list.field('feed', {
-      type: 'Post',
+    t.list.field('beginnerRecipes', {
+      type: 'Recipe',
       resolve: (_, args, ctx) => {
-        return ctx.prisma.post.findMany({
-          where: { published: true },
+        return ctx.prisma.recipe.findMany({
+          where: { difficulty: "Beginner" },
         })
       },
     })
 
-    t.list.field('filterPosts', {
-      type: 'Post',
+    t.list.field('allRecipes', {
+      type: 'Recipe',
+      resolve: (_, args, ctx) => {
+        return ctx.prisma.recipe.findMany()
+      },
+    })
+    
+    t.list.field('allUsers', {
+      type: 'User',
+      resolve: (_, args, ctx) => {
+        return ctx.prisma.user.findMany()
+      },
+    })
+
+    t.list.field('searchRecipes', {
+      type: 'Recipe',
       args: {
         searchString: stringArg({ nullable: true }),
       },
       resolve: (_, { searchString }, ctx) => {
-        return ctx.prisma.post.findMany({
+        return ctx.prisma.recipe.findMany({
           where: {
             OR: [
               { title: { contains: searchString } },
-              { content: { contains: searchString } },
+              { description: { contains: searchString } },
             ],
           },
         })
@@ -62,39 +141,42 @@ const Mutation = objectType({
   name: 'Mutation',
   definition(t) {
     t.crud.createOneUser({ alias: 'signupUser' })
-    t.crud.deleteOnePost()
+    t.crud.createOneRecipe()
 
-    t.field('createDraft', {
-      type: 'Post',
+    t.field('createRecipe', {
+      type: 'Recipe',
       args: {
         title: stringArg({ nullable: false }),
-        content: stringArg(),
-        authorEmail: stringArg(),
+        createdAt: stringArg(),
+        userEmail: stringArg(),
+        difficulty: stringArg(),
+        description: stringArg(),
       },
-      resolve: (_, { title, content, authorEmail }, ctx) => {
-        return ctx.prisma.post.create({
+      resolve: (_, { title, createdAt, difficulty, description, userEmail }, ctx) => {
+        return ctx.prisma.recipe.create({
           data: {
             title,
-            content,
-            published: false,
-            author: {
-              connect: { email: authorEmail },
+            createdAt,
+            description,
+            difficulty,
+            user: {
+              connect: { email: userEmail },
             },
           },
         })
       },
     })
 
-    t.field('publish', {
-      type: 'Post',
+    t.field('updateRecipe', {
+      type: 'Recipe',
       nullable: true,
       args: {
         id: intArg(),
       },
       resolve: (_, { id }, ctx) => {
-        return ctx.prisma.post.update({
+        return ctx.prisma.recipe.update({
           where: { id: Number(id) },
-          data: { published: true },
+          data: { ...ctx },
         })
       },
     })
@@ -102,7 +184,7 @@ const Mutation = objectType({
 })
 
 export const schema = makeSchema({
-  types: [Query, Mutation, Post, User],
+  types: [Query, Mutation, User, Recipe, Result, Resource, Step, Ingredient],
   plugins: [nexusPrismaPlugin()],
   outputs: {
     schema: __dirname + '/../schema.graphql',

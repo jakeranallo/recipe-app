@@ -7,27 +7,63 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-model User {
-  avatar String?
-  email  String   @unique
-  id     Int      @default(autoincrement()) @id
-  name   String?
-  Post   Post[]
-  Recipe Recipe[]
+model Resource {
+  id     Int    @default(autoincrement()) @id
+  src    String
+  stepId Int?
+  step   Step?  @relation(fields: [stepId], references: [id])
+  title  String
 }
 
-model Post {
-  authorId  Int?
-  content   String?
-  id        Int     @default(autoincrement()) @id
-  published Boolean @default(false)
-  title     String
-  User      User?   @relation(fields: [authorId], references: [id])
+model Result {
+  id       Int     @default(autoincrement()) @id
+  img      String
+  recipeId Int?
+  userId   Int?
+  recipe   Recipe? @relation(fields: [recipeId], references: [id])
+  user     User?   @relation(fields: [userId], references: [id])
 }
 
 model Recipe {
-  authorId Int?
-  id       Int    @default(autoincrement()) @id
-  title    String
-  User     User?  @relation(fields: [authorId], references: [id])
+  createdAt   String?
+  description String?
+  difficulty  String?
+  id          Int          @default(autoincrement()) @id
+  imgOne      String?
+  imgThree    String?
+  imgTwo      String?
+  title       String
+  userId      Int?
+  user        User?        @relation(fields: [userId], references: [id])
+  results      Result[]
+  ingredients  Ingredient[]
+}
+
+model Ingredient {
+  amount   String?
+  category String?
+  id       Int     @default(autoincrement()) @id
+  name     String
+  recipeId Int?
+  recipe   Recipe? @relation(fields: [recipeId], references: [id])
+}
+
+model User {
+  avatar    String?
+  email     String   @unique
+  firstName String
+  id        Int      @default(autoincrement()) @id
+  lastName  String
+  results    Result[]
+  recipes    Recipe[]
+}
+
+model Step {
+  description String?
+  duration    String?
+  id          Int     @default(autoincrement()) @id
+  recipeId    Int?
+  src         String?
+  title       String
+  recipe      Recipe? @relation(fields: [recipeId], references: [id])
 }
