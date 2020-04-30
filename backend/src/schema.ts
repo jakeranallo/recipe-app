@@ -110,7 +110,7 @@ const Query = objectType({
         return ctx.prisma.recipe.findMany()
       },
     })
-    
+
     t.list.field('allUsers', {
       type: 'User',
       resolve: (_, args, ctx) => {
@@ -141,26 +141,24 @@ const Mutation = objectType({
   name: 'Mutation',
   definition(t) {
     t.crud.createOneUser({ alias: 'signupUser' })
-    t.crud.createOneRecipe()
+    t.crud.createOneResult()
 
-    t.field('createRecipe', {
-      type: 'Recipe',
+    t.field('createResult', {
+      type: 'Result',
       args: {
-        title: stringArg({ nullable: false }),
-        createdAt: stringArg(),
-        userEmail: stringArg(),
-        difficulty: stringArg(),
-        description: stringArg(),
+        img: stringArg({ nullable: false }),
+        recipeId: intArg(),
+        userId: intArg(),
       },
-      resolve: (_, { title, createdAt, difficulty, description, userEmail }, ctx) => {
-        return ctx.prisma.recipe.create({
+      resolve: (_, { img, recipeId, userId }, ctx) => {
+        return ctx.prisma.result.create({
           data: {
-            title,
-            createdAt,
-            description,
-            difficulty,
+            img,
+            recipe: {
+              connect: { id: recipeId },
+            },
             user: {
-              connect: { email: userEmail },
+              connect: { id: userId },
             },
           },
         })

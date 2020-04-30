@@ -27,8 +27,8 @@ input IngredientWhereUniqueInput {
 }
 
 type Mutation {
-  createOneRecipe(data: RecipeCreateInput!): Recipe!
-  createRecipe(createdAt: String, description: String, difficulty: String, title: String!, userEmail: String): Recipe!
+  createOneResult(data: ResultCreateInput!): Result!
+  createResult(img: String!, recipeId: Int, userId: Int): Result!
   signupUser(data: UserCreateInput!): User!
   updateRecipe(id: Int): Recipe
 }
@@ -55,20 +55,6 @@ type Recipe {
   title: String!
   user: User
   userId: Int
-}
-
-input RecipeCreateInput {
-  createdAt: String
-  description: String
-  difficulty: String
-  imgOne: String
-  imgThree: String
-  imgTwo: String
-  ingredients: IngredientCreateManyWithoutRecipeInput
-  results: ResultCreateManyWithoutRecipeInput
-  step: StepCreateManyWithoutRecipeInput
-  title: String!
-  user: UserCreateOneWithoutRecipesInput
 }
 
 input RecipeCreateManyWithoutUserInput {
@@ -140,6 +126,12 @@ type Result {
   recipeId: Int
   user: User
   userId: Int
+}
+
+input ResultCreateInput {
+  img: String!
+  recipe: RecipeCreateOneWithoutResultsInput
+  user: UserCreateOneWithoutResultsInput
 }
 
 input ResultCreateManyWithoutRecipeInput {
