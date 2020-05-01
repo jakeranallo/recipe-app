@@ -1,8 +1,12 @@
 import React from 'react';
 import Main from './navigation/Main';
+import { ApolloProvider } from '@apollo/react-hooks';
+import { client } from '../src/utils/apollo'
 
-export default class App extends React.Component {
-  public render() {
-    return <Main />;
-  }
+export const App = () => {
+  return (
+    <ApolloProvider client={client}>
+      <Main />
+    </ApolloProvider>
+  )
 }

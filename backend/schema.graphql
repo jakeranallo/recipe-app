@@ -36,7 +36,7 @@ type Mutation {
 type Query {
   allRecipes: [Recipe!]!
   allUsers: [User!]!
-  beginnerRecipes: [Recipe!]!
+  difficultyFeed(filter: String): [Recipe!]!
   recipe(where: RecipeWhereUniqueInput!): Recipe
   searchRecipes(searchString: String): [Recipe!]!
   user(where: UserWhereUniqueInput!): User

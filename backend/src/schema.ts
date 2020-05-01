@@ -95,11 +95,14 @@ const Query = objectType({
     t.crud.recipe()
     t.crud.user()
 
-    t.list.field('beginnerRecipes', {
+    t.list.field('difficultyFeed', {
       type: 'Recipe',
-      resolve: (_, args, ctx) => {
+      args: {
+        filter: stringArg({ nullable: true }),
+      },
+      resolve: (_, { filter }, ctx) => {
         return ctx.prisma.recipe.findMany({
-          where: { difficulty: "Beginner" },
+          where: { difficulty: { contains: filter } },
         })
       },
     })

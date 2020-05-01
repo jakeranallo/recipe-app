@@ -1,0 +1,10 @@
+{
+  "devToolsPort": 19003,
+  "expoServerPort": 19000,
+  "packagerPort": 19001,
+  "packagerPid": 34576,
+  "expoServerNgrokUrl": "https://py-ydj.jakeranallo.frontend.exp.direct",
+  "packagerNgrokUrl": "https://packager.py-ydj.jakeranallo.frontend.exp.direct",
+  "ngrokPid": 34599,
+  "webpackServerPort": null
+}
