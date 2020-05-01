@@ -4,6 +4,7 @@ const DifficultyFeedQuery = gql`
   query difficultyFeed($filter: String!) {
     difficultyFeed(filter: $filter) {
       title
+      description
       imgOne
       imgTwo
       imgThree
