@@ -1,4 +1,5 @@
 export default {
-  primary: 'Neuton',
-  secondary: 'Metropolis',
+  primary: 'Neuton-Bold',
+  secondary: 'Metropolis-Regular',
+  tertiary: 'Metropolis-SemiBold',
 };

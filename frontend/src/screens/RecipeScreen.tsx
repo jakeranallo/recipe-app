@@ -1,9 +1,12 @@
 import React from 'react';
-import { Text, Button, View, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useNavigationParam } from 'react-navigation-hooks'
+import { NavigationInjectedProps } from 'react-navigation'
 import styled from 'styled-components/native'
 import { useFonts } from '@use-expo/font';
 import colors from '../theme/colours'
+import fonts from '../theme/fonts'
+import { SvgXml } from 'react-native-svg';
 
 const Header = styled.View`
   display: flex;
@@ -16,14 +19,16 @@ const Title = styled.Text`
   font-size: 30px;
   line-height: 26px;
   text-align: center;
-  width: 70%;
+  width: 80%;
   padding: 0 16px;
 `
 
 const HeaderAction = styled.TouchableOpacity`
-  width: 15%;
+  width: 10%;
   height: 50px;
-  background-color: red;
+  display: flex;
+  align-items: center;
+  flex:1;
 `
 
 const TabBar = styled.View`
@@ -48,7 +53,6 @@ const TabSelect = styled.View`
   background-color: ${colors.primary};
 `
 
-
 const TileImage = styled.ImageBackground`
   position: absolute;
   border-radius: 2px;
@@ -68,10 +72,10 @@ const MainTile = styled.TouchableOpacity`
 `
 
 const TileContainer = styled.TouchableOpacity`
-position: relative;
-padding-top: 33.3%;
-width: 33.3%;
-height: 0px;
+  position: relative;
+  padding-top: 33.3%;
+  width: 33.3%;
+  height: 0px;
 `
 
 const SideContainer = styled.View`
@@ -98,6 +102,41 @@ const GridContainer = styled.View`
   justify-content: flex-start;
 `
 
+const ButtonContainer = styled.View`
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+  width: 100%;
+`
+
+const Button = styled.TouchableOpacity`
+  background-color: ${colors.primary};
+  padding: 8px 64px;
+  border-radius: 50px;
+`
+
+const ButtonText = styled.Text`
+  font-size: 24px;
+  text-align: center;
+  line-height: 0;
+  margin-bottom: 8px;
+`
+
+const Paragraph = styled.Text`
+  font-size: 16px;
+  line-height: 22px;
+  color: ${colors.textGrey};
+`
+
+const DescriptionContainer = styled.View`
+  padding: 8px 24px 0 24px;
+`
+
+
+
 const IngredientsTab = ({ recipe }) => {
   return (
     <View>
@@ -117,59 +156,92 @@ const ResultsTab = ({ recipe }) => {
     <View>
       <HeroContainer>
         <MainTile>
-          <TileImage source={{ uri: "https://reactnative.dev/img/header_logo.svg" }} />
+          <TileImage source={{ uri: recipe.imgOne }} />
         </MainTile>
         <SideContainer>
           <SideTileContainer>
-            <TileImage source={{ uri: "https://reactnative.dev/img/header_logo.svg" }} />
+            <TileImage source={{ uri: recipe.imgTwo }} />
           </SideTileContainer>
           <SideTileContainer>
-            <TileImage source={{ uri: "https://reactnative.dev/img/header_logo.svg" }} />
+            <TileImage source={{ uri: recipe.imgThree }} />
           </SideTileContainer>
         </SideContainer>
       </HeroContainer>
 
       <GridContainer>
         <TileContainer>
-          <TileImage source={{ uri: "https://reactnative.dev/img/header_logo.svg" }} />
+          <TileImage source={{ uri: recipe.imgOne }} />
         </TileContainer>
         <TileContainer>
-          <TileImage source={{ uri: "https://reactnative.dev/img/header_logo.svg" }} />
+          <TileImage source={{ uri: recipe.imgTwo }} />
         </TileContainer>
         <TileContainer>
-          <TileImage source={{ uri: "https://reactnative.dev/img/header_logo.svg" }} />
+          <TileImage source={{ uri: recipe.imgThree }} />
         </TileContainer>
       </GridContainer>
     </View>
   );
 }
 
-export const RecipeScreen = () => {
+const back = `<svg width="26px" height="22px" viewBox="0 0 26 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="back" transform="translate(3.000000, 1.000000)" stroke="#FFFFFF" stroke-width="3">
+        <polyline id="Path" points="9.92156863 19.8431373 -1.24344979e-14 9.92156863 9.92156863 -2.48689958e-14"></polyline>
+        <line x1="22.3235294" y1="9.92156863" x2="0" y2="9.92156863" id="Path"></line>
+    </g>
+</g>
+</svg>`
+
+const menu = `<svg width="5px" height="20px" viewBox="0 0 5 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="menu" fill="#FFFFFF" fill-rule="nonzero">
+        <circle id="Oval" cx="2.5" cy="2.5" r="2.5"></circle>
+        <circle id="Oval-Copy" cx="2.5" cy="10" r="2.5"></circle>
+        <circle id="Oval-Copy-2" cx="2.5" cy="17.5" r="2.5"></circle>
+    </g>
+</g>
+</svg>`
+
+export const RecipeScreen = ({ navigation }: NavigationInjectedProps) => {
   const recipe = useNavigationParam('recipe');
-  const [fontsLoaded] = useFonts({ 'Neuton-Bold': require('../../assets/fonts/Neuton-Bold.ttf'), });
+  const [fontsLoaded] = useFonts({ 'Neuton-Bold': require('../../assets/fonts/Neuton-Bold.ttf'), 'Metropolis-Regular': require('../../assets/fonts/Metropolis-Regular.otf'), 'Metropolis-SemiBold': require('../../assets/fonts/Metropolis-SemiBold.otf'), });
+  ;
   const [isActive, setActive] = React.useState(1)
   return (
     <>
       <Header>
-        <HeaderAction></HeaderAction>
-        <Title style={fontsLoaded && { fontFamily: "Neuton-Bold" }}>{recipe.title}</Title>
-        <HeaderAction></HeaderAction>
+        <HeaderAction onPress={() => { navigation.goBack() }}>
+          <SvgXml xml={back} />
+          <Image source={require('../../assets/icons/back.svg')} style={{ width: 100, height: 100 }} /></HeaderAction>
+        <Title style={fontsLoaded && { fontFamily: fonts.primary }}>{recipe.title}</Title>
+        <HeaderAction>
+          <SvgXml xml={menu} />
+        </HeaderAction>
       </Header>
-      <ScrollView style={{ padding: 4 }}>
-        <Text>{recipe.description}</Text>
+      <ScrollView>
+        <DescriptionContainer>
+          <Paragraph style={{ fontFamily: fonts.secondary }}>{recipe.description}</Paragraph>
+        </DescriptionContainer>
         <TabBar>
           <TabSelect style={{ left: isActive == 1 ? 0 : '50%' }} />
           <TabButton
             onPress={() => setActive(1)}>
-            <Text style={{ color: isActive == 1 ? colors.primary : colors.textInactive, textAlign: 'center' }}>Ingredients</Text>
+            <Text style={{ color: isActive == 1 ? colors.primary : colors.textInactive, textAlign: 'center', fontFamily: fonts.tertiary, fontSize: 16 }}>Ingredients</Text>
           </TabButton>
           <TabButton
             onPress={() => setActive(2)}>
-            <Text style={{ color: isActive == 2 ? colors.primary : colors.textInactive, textAlign: 'center' }}>Results</Text>
+            <Text style={{ color: isActive == 2 ? colors.primary : colors.textInactive, textAlign: 'center', fontFamily: fonts.tertiary, fontSize: 16 }}>Results</Text>
           </TabButton>
         </TabBar>
-        {isActive === 1 ? <IngredientsTab recipe={recipe} /> : <ResultsTab recipe={recipe} />}
+        <View style={{ padding: 4 }}>
+          {isActive === 1 ? <IngredientsTab recipe={recipe} /> : <ResultsTab recipe={recipe} />}
+        </View>
       </ScrollView>
+      <ButtonContainer>
+        <Button>
+          <ButtonText style={fontsLoaded && { fontFamily: fonts.primary }}>Start Recipe</ButtonText>
+        </Button>
+      </ButtonContainer>
     </>
   );
 }

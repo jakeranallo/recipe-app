@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="16px" height="10px" viewBox="0 0 16 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="14px" height="10px" viewBox="0 0 14 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
     <title>chevron</title>
     <desc>Created with Sketch.</desc>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-        <g id="feed" transform="translate(-273.000000, -41.000000)" stroke="#FFFFFF" stroke-width="3">
-            <g id="chevron" transform="translate(281.000000, 46.000000) rotate(-90.000000) translate(-281.000000, -46.000000) translate(278.000000, 40.000000)">
-                <polyline id="Path" points="5.95294118 11.9058824 -7.57041488e-15 5.95294118 5.95294118 -1.51408298e-14"></polyline>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="chevron" transform="translate(1.000000, 1.000000)" stroke="#FFFFFF" stroke-width="3">
+            <g transform="translate(6.000000, 3.000000) rotate(-90.000000) translate(-6.000000, -3.000000) translate(3.000000, -3.000000)" id="Path">
+                <polyline points="5.95294118 11.9058824 -7.57041488e-15 5.95294118 5.95294118 -1.51408298e-14"></polyline>
             </g>
         </g>
     </g>

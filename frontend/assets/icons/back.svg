@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="26px" height="24px" viewBox="0 0 26 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="26px" height="22px" viewBox="0 0 26 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
     <title>back</title>
     <desc>Created with Sketch.</desc>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-        <g id="profile" transform="translate(-18.000000, -20.000000)" stroke="#FFFFFF" stroke-width="3">
-            <g id="back" transform="translate(20.000000, 22.000000)">
-                <polyline id="Path" points="9.92156863 19.8431373 -1.26173581e-14 9.92156863 9.92156863 -2.52347163e-14"></polyline>
-                <line x1="22.3235294" y1="9.92156863" x2="0" y2="9.92156863" id="Path"></line>
-            </g>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="back" transform="translate(3.000000, 1.000000)" stroke="#FFFFFF" stroke-width="3">
+            <polyline id="Path" points="9.92156863 19.8431373 -1.24344979e-14 9.92156863 9.92156863 -2.48689958e-14"></polyline>
+            <line x1="22.3235294" y1="9.92156863" x2="0" y2="9.92156863" id="Path"></line>
         </g>
     </g>
 </svg>
