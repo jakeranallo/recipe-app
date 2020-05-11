@@ -1,5 +1,5 @@
-import React from 'react';
-import { Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
+import React, { useRef } from 'react';
+import { Animated, Text, View, ScrollView, Image, RefreshControl, Dimensions, TouchableOpacity } from 'react-native';
 import { useNavigationParam } from 'react-navigation-hooks'
 import { NavigationInjectedProps } from 'react-navigation'
 import styled from 'styled-components/native'
@@ -7,6 +7,11 @@ import { useFonts } from '@use-expo/font';
 import colors from '../theme/colours'
 import fonts from '../theme/fonts'
 import { SvgXml } from 'react-native-svg';
+import { useQuery } from '@apollo/react-hooks';
+import { SingleRecipeQuery } from '../gql/queries/singleRecipe'
+import { Recipe, Ingredient, Result, Step } from '../utils/types'
+import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
+import Modal from 'react-native-modalbox'
 
 const Header = styled.View`
   display: flex;
@@ -29,28 +34,6 @@ const HeaderAction = styled.TouchableOpacity`
   display: flex;
   align-items: center;
   flex:1;
-`
-
-const TabBar = styled.View`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  border-bottom-color: ${colors.strokeGrey};
-  border-bottom-width: 1px;
-`
-
-const TabButton = styled.TouchableOpacity`
-  width: 50%;
-  padding: 16px;
-`
-
-const TabSelect = styled.View`
-  width: 50%;
-  position: absolute;
-  bottom: 0;
-  height: 2px;
-  background-color: ${colors.primary};
 `
 
 const TileImage = styled.ImageBackground`
@@ -100,6 +83,7 @@ const GridContainer = styled.View`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  flex-wrap: wrap;
 `
 
 const ButtonContainer = styled.View`
@@ -131,57 +115,27 @@ const Paragraph = styled.Text`
   color: ${colors.textGrey};
 `
 
-const DescriptionContainer = styled.View`
-  padding: 8px 24px 0 24px;
+const DescriptionContainer = styled.TouchableHighlight`
+  padding: 8px 16px 0 16px;
+  overflow: hidden;
 `
 
+const Checkbox = styled.View`
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+`
 
-
-const IngredientsTab = ({ recipe }) => {
-  return (
-    <View>
-      {recipe.ingredients && recipe.ingredients.map((ingredient, i) =>
-        <View>
-          <Text key={i}>{ingredient.subhead}</Text>
-          <View>{ingredient.list.map((item, i) =>
-            <Text key={i}>{item}</Text>)}
-          </View>
-        </View>)}
-    </View>
-  );
-}
-
-const ResultsTab = ({ recipe }) => {
-  return (
-    <View>
-      <HeroContainer>
-        <MainTile>
-          <TileImage source={{ uri: recipe.imgOne }} />
-        </MainTile>
-        <SideContainer>
-          <SideTileContainer>
-            <TileImage source={{ uri: recipe.imgTwo }} />
-          </SideTileContainer>
-          <SideTileContainer>
-            <TileImage source={{ uri: recipe.imgThree }} />
-          </SideTileContainer>
-        </SideContainer>
-      </HeroContainer>
-
-      <GridContainer>
-        <TileContainer>
-          <TileImage source={{ uri: recipe.imgOne }} />
-        </TileContainer>
-        <TileContainer>
-          <TileImage source={{ uri: recipe.imgTwo }} />
-        </TileContainer>
-        <TileContainer>
-          <TileImage source={{ uri: recipe.imgThree }} />
-        </TileContainer>
-      </GridContainer>
-    </View>
-  );
-}
+const CheckboxContainer = styled.TouchableOpacity`
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  flex-direction: row;
+`
 
 const back = `<svg width="26px" height="22px" viewBox="0 0 26 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -202,46 +156,242 @@ const menu = `<svg width="5px" height="20px" viewBox="0 0 5 20" version="1.1" xm
 </g>
 </svg>`
 
+const tick = `<svg width="14px" height="13px" viewBox="0 0 14 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="tick" transform="translate(1.000000, 1.000000)" stroke="#FFFFFF" stroke-width="3">
+            <polyline points="0 6 3 9 11 0"></polyline>
+        </g>
+    </g>
+</svg>`
+
+
+const Steps = ({ recipe }: Recipe, { navigation }: NavigationInjectedProps) => {
+
+  const [activeStep, setActiveStep] = React.useState(0);
+  const step = recipe.step[activeStep]
+
+  return (
+    <View>
+      {activeStep + 1 <= recipe.step.length ?
+        <View>
+          {console.log(activeStep + 1, recipe.step.length)}
+          <Image source={{ uri: step.src }} style={{ width: '100%', height: 500, borderRadius: 20 }} />
+          <Text>{step.title}</Text>
+          <Text>{step.description}</Text>
+          <TouchableOpacity
+            onPress={() => activeStep === 0 ? null : setActiveStep(activeStep - 1)}>
+            <Text>Prev</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setActiveStep(activeStep + 1)}>
+            <Text>Next</Text>
+          </TouchableOpacity>
+          <View style={{ display: 'flex', flexDirection: 'row' }}>
+            {recipe && recipe.step.map((step: Step, i: number) =>
+              <View
+                key={i}
+                style={{
+                  width: `${100 / recipe.step.length}%`,
+                  height: 8,
+                  backgroundColor: activeStep === i ? 'red' : 'blue'
+                }} />)}
+          </View>
+        </View> :
+        <View style={{ paddingTop: 40 }}>
+          <Text>Recipe Complete</Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Result', {
+                recipe: recipe.id,
+              });
+            }}>
+            <Text>Share Your Result</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setActiveStep(0)}>
+            <Text>Start Again</Text>
+          </TouchableOpacity>
+        </View>
+      }
+    </View>
+  )
+}
+
+
+const IngredientsTab = () => {
+
+  const recipeId = useNavigationParam('recipe');
+  const { loading, error, data } = useQuery(SingleRecipeQuery, {
+    variables: { recipeId: recipeId.id },
+  });
+  const recipe = data.singleRecipe[0]
+
+  const [checkedItems, setCheckedItems] = React.useState<Ingredient>({});
+
+  const handleCheck = (ingredient: Ingredient) => {
+    Object.values(checkedItems).map(e => e).includes('' + ingredient.id) ?
+      setCheckedItems(Object.values(checkedItems).filter(item => item.id !== ingredient.id)) :
+      setCheckedItems({ ...checkedItems, [ingredient.id]: ingredient });
+    // console.log("checkedItems: ", checkedItems);
+    console.log()
+  }
+
+  return (
+    <View>
+      {recipe.ingredients && recipe.ingredients.map((ingredient: Ingredient, i: number) =>
+        <View key={i}>
+          <CheckboxContainer onPress={() => handleCheck(ingredient)}>
+            <Checkbox
+              style={{ backgroundColor: checkedItems[ingredient.id] ? colors.positive : colors.strokeGrey }}>
+              {checkedItems[ingredient.id] && <SvgXml xml={tick} />}</Checkbox>
+            <Paragraph
+              style={{ fontFamily: fonts.secondary, color: checkedItems[ingredient.id] ? 'white' : colors.textGrey }}>
+              {ingredient.amount} {ingredient.name}</Paragraph>
+          </CheckboxContainer>
+        </View>
+      )}
+    </View>
+  )
+}
+
+const ResultsTab = () => {
+
+  const recipeId = useNavigationParam('recipe');
+  const { loading, error, data } = useQuery(SingleRecipeQuery, {
+    variables: { recipeId: recipeId.id },
+  });
+  const recipe = data.singleRecipe[0]
+
+  return (
+    <View>
+      <HeroContainer>
+        <MainTile>
+          <TileImage source={{ uri: recipe.imgOne }} />
+        </MainTile>
+        <SideContainer>
+          <SideTileContainer>
+            <TileImage source={{ uri: recipe.imgTwo }} />
+          </SideTileContainer>
+          <SideTileContainer>
+            <TileImage source={{ uri: recipe.imgThree }} />
+          </SideTileContainer>
+        </SideContainer>
+      </HeroContainer>
+
+      <GridContainer>
+        {recipe.results.map((result: Result, i: number) =>
+          <TileContainer key={i}>
+            <TileImage source={{ uri: result.img }} />
+          </TileContainer>
+        )}
+      </GridContainer>
+    </View>
+  );
+}
+
+function wait(timeout: number) {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout);
+  });
+}
+
+const initialLayout = { width: Dimensions.get('window').width };
+
 export const RecipeScreen = ({ navigation }: NavigationInjectedProps) => {
-  const recipe = useNavigationParam('recipe');
-  const [fontsLoaded] = useFonts({ 'Neuton-Bold': require('../../assets/fonts/Neuton-Bold.ttf'), 'Metropolis-Regular': require('../../assets/fonts/Metropolis-Regular.otf'), 'Metropolis-SemiBold': require('../../assets/fonts/Metropolis-SemiBold.otf'), });
+
+  // Tabs Function
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'first', title: 'Ingredients' },
+    { key: 'second', title: 'Results' },
+  ]);
+  const renderScene = SceneMap({
+    first: IngredientsTab,
+    second: ResultsTab,
+  });
+
+  // Refresh Function
+
+  const [refreshing, setRefreshing] = React.useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, [refreshing]);
+
+  // Get Recipe
+
+  const recipeId = useNavigationParam('recipe');
+  const { loading, error, data } = useQuery(SingleRecipeQuery, {
+    variables: { recipeId: recipeId.id },
+  });
+  const recipe = data && data.singleRecipe[0]
+
+  // Get Fonts
+
+  const [fontsLoaded] = useFonts({
+    'Neuton-Bold': require('../../assets/fonts/Neuton-Bold.ttf'),
+    'Metropolis-Regular': require('../../assets/fonts/Metropolis-Regular.otf'),
+    'Metropolis-SemiBold': require('../../assets/fonts/Metropolis-SemiBold.otf'),
+  });
   ;
-  const [isActive, setActive] = React.useState(1)
+
+  const [expanded, setExpanded] = React.useState(false);
+
+  const [modalOpen, setModalOpen] = React.useState(false);
+
+
   return (
     <>
-      <Header>
-        <HeaderAction onPress={() => { navigation.goBack() }}>
-          <SvgXml xml={back} />
-          <Image source={require('../../assets/icons/back.svg')} style={{ width: 100, height: 100 }} /></HeaderAction>
-        <Title style={fontsLoaded && { fontFamily: fonts.primary }}>{recipe.title}</Title>
-        <HeaderAction>
-          <SvgXml xml={menu} />
-        </HeaderAction>
-      </Header>
-      <ScrollView>
-        <DescriptionContainer>
-          <Paragraph style={{ fontFamily: fonts.secondary }}>{recipe.description}</Paragraph>
-        </DescriptionContainer>
-        <TabBar>
-          <TabSelect style={{ left: isActive == 1 ? 0 : '50%' }} />
-          <TabButton
-            onPress={() => setActive(1)}>
-            <Text style={{ color: isActive == 1 ? colors.primary : colors.textInactive, textAlign: 'center', fontFamily: fonts.tertiary, fontSize: 16 }}>Ingredients</Text>
-          </TabButton>
-          <TabButton
-            onPress={() => setActive(2)}>
-            <Text style={{ color: isActive == 2 ? colors.primary : colors.textInactive, textAlign: 'center', fontFamily: fonts.tertiary, fontSize: 16 }}>Results</Text>
-          </TabButton>
-        </TabBar>
-        <View style={{ padding: 4 }}>
-          {isActive === 1 ? <IngredientsTab recipe={recipe} /> : <ResultsTab recipe={recipe} />}
-        </View>
-      </ScrollView>
-      <ButtonContainer>
-        <Button>
-          <ButtonText style={fontsLoaded && { fontFamily: fonts.primary }}>Start Recipe</ButtonText>
-        </Button>
-      </ButtonContainer>
+      {fontsLoaded && loading ? <Text>Loading...</Text> :
+        error ? <Text>{error.message}</Text> : recipe &&
+          <>
+            <Header>
+              <HeaderAction onPress={() => { navigation.goBack() }}>
+                <SvgXml xml={back} />
+                <Image source={require('../../assets/icons/back.svg')} style={{ width: 100, height: 100 }} /></HeaderAction>
+              <Title style={fontsLoaded && { fontFamily: fonts.primary }}>{recipe.title}</Title>
+              <HeaderAction>
+                <SvgXml xml={menu} />
+              </HeaderAction>
+            </Header>
+            <Modal isOpen={modalOpen} position={"center"} onClosed={() => setModalOpen(!modalOpen)}>
+              <Steps recipe={recipe && recipe} navigation={navigation} />
+            </Modal>
+            <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}>
+              <DescriptionContainer style={{ height: expanded ? 'auto' : 55 }}>
+                <Paragraph
+                  onPress={() => setExpanded(!expanded)}
+                  numberOfLines={expanded ? 0 : 2}
+                  style={{ color: expanded ? 'white' : colors.textGrey, fontFamily: fonts.secondary }}>
+                  {recipe.description} {recipe.description}
+                </Paragraph>
+              </DescriptionContainer>
+              <TabView
+                renderTabBar={props =>
+                  <TabBar {...props}
+                    indicatorStyle={{ backgroundColor: colors.primary }}
+                    style={{ backgroundColor: colors.secondary, borderBottomColor: colors.strokeGrey, borderBottomWidth: 1 }}
+                    renderLabel={({ route, focused }) => (
+                      <Text style={{ color: focused ? colors.primary : colors.textInactive, textAlign: 'center', fontFamily: fonts.tertiary, fontSize: 16 }}>
+                        {route.title}
+                      </Text>
+                    )}
+                  />}
+                navigationState={{ index, routes }}
+                renderScene={renderScene}
+                onIndexChange={setIndex}
+                initialLayout={initialLayout}
+              />
+
+            </ScrollView>
+            <ButtonContainer>
+              <Button onPress={() => setModalOpen(!modalOpen)}>
+                <ButtonText style={fontsLoaded && { fontFamily: fonts.primary }}>Start Recipe</ButtonText>
+              </Button>
+            </ButtonContainer>
+          </>
+      }
     </>
   );
 }

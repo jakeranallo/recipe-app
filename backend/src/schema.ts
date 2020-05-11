@@ -1,6 +1,10 @@
 import { nexusPrismaPlugin } from 'nexus-prisma'
 import { intArg, makeSchema, objectType, stringArg } from '@nexus/schema'
 
+// change step to steps
+// update step mockdata
+// change structure of ingredients
+
 const User = objectType({
   name: 'User',
   definition(t) {
@@ -35,6 +39,9 @@ const Recipe = objectType({
       pagination: false,
     })
     t.model.results({
+      pagination: false,
+    })
+    t.model.step({
       pagination: false,
     })
   },
@@ -107,10 +114,15 @@ const Query = objectType({
       },
     })
 
-    t.list.field('allRecipes', {
+    t.list.field('singleRecipe', {
       type: 'Recipe',
-      resolve: (_, args, ctx) => {
-        return ctx.prisma.recipe.findMany()
+      args: {
+        recipeId: intArg({ nullable: true }),
+      },
+      resolve: (_, { recipeId }, ctx) => {
+        return ctx.prisma.recipe.findMany({
+          where: { id: { equals: recipeId } },
+        })
       },
     })
 

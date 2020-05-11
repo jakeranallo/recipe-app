@@ -1,7 +1,7 @@
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
-import { FeedScreen, ProfileScreen, RecipeScreen } from '../screens';
+import { FeedScreen, ProfileScreen, RecipeScreen, ResultScreen } from '../screens';
 import colours from '../theme/colours'
 
 const RootStack = createStackNavigator({
@@ -22,6 +22,12 @@ const RootStack = createStackNavigator({
       header: undefined
     }),
     screen: RecipeScreen
+  },
+  Result: {
+    navigationOptions: () => ({
+      header: undefined
+    }),
+    screen: ResultScreen
   }
 },
   {

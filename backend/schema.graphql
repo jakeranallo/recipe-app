@@ -34,11 +34,11 @@ type Mutation {
 }
 
 type Query {
-  allRecipes: [Recipe!]!
   allUsers: [User!]!
   difficultyFeed(filter: String): [Recipe!]!
   recipe(where: RecipeWhereUniqueInput!): Recipe
   searchRecipes(searchString: String): [Recipe!]!
+  singleRecipe(recipeId: Int): [Recipe!]!
   user(where: UserWhereUniqueInput!): User
 }
 
@@ -52,6 +52,7 @@ type Recipe {
   imgTwo: String
   ingredients: [Ingredient!]!
   results: [Result!]!
+  step: [Step!]!
   title: String!
   user: User
   userId: Int
