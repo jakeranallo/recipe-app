@@ -340,7 +340,7 @@ export const RecipeScreen = ({ navigation }: NavigationInjectedProps) => {
               </HeaderAction>
             </Header>
             <Modal isOpen={modalOpen} position={"center"} onClosed={() => setModalOpen(!modalOpen)}>
-              <Steps steps={recipe && recipe.step} recipeId={recipe.id} navigation={navigation} />
+              <Steps steps={recipe && recipe.step} recipeId={recipeId.id} navigation={navigation} />
             </Modal>
             <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}>
               <DescriptionContainer style={{ height: expanded ? 'auto' : 55 }}>
