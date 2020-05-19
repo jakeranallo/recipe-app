@@ -3,6 +3,7 @@ import styled from 'styled-components/native'
 import { SvgXml } from 'react-native-svg';
 import { useFonts } from '@use-expo/font';
 import fonts from '../theme/fonts'
+import { NavigationInjectedProps } from 'react-navigation'
 
 const HeaderContainer = styled.View`
   display: flex;

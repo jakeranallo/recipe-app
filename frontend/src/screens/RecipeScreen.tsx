@@ -12,6 +12,7 @@ import { SingleRecipeQuery } from '../gql/queries/singleRecipe'
 import { Recipe, Ingredient, Result, Step } from '../utils/types'
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import Modal from 'react-native-modalbox'
+import { back, menu, tick } from '../theme/icons'
 
 const Header = styled.View`
   display: flex;
@@ -137,44 +138,27 @@ const CheckboxContainer = styled.TouchableOpacity`
   flex-direction: row;
 `
 
-const back = `<svg width="26px" height="22px" viewBox="0 0 26 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-    <g id="back" transform="translate(3.000000, 1.000000)" stroke="#FFFFFF" stroke-width="3">
-        <polyline id="Path" points="9.92156863 19.8431373 -1.24344979e-14 9.92156863 9.92156863 -2.48689958e-14"></polyline>
-        <line x1="22.3235294" y1="9.92156863" x2="0" y2="9.92156863" id="Path"></line>
-    </g>
-</g>
-</svg>`
+type StepsProps =
+  NavigationInjectedProps &
+  {
+    steps:
+    [{
+      src: string,
+      title: string,
+      description: string
+    }]
+  } &
+  { recipeId: number }
 
-const menu = `<svg width="5px" height="20px" viewBox="0 0 5 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-    <g id="menu" fill="#FFFFFF" fill-rule="nonzero">
-        <circle id="Oval" cx="2.5" cy="2.5" r="2.5"></circle>
-        <circle id="Oval-Copy" cx="2.5" cy="10" r="2.5"></circle>
-        <circle id="Oval-Copy-2" cx="2.5" cy="17.5" r="2.5"></circle>
-    </g>
-</g>
-</svg>`
-
-const tick = `<svg width="14px" height="13px" viewBox="0 0 14 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="tick" transform="translate(1.000000, 1.000000)" stroke="#FFFFFF" stroke-width="3">
-            <polyline points="0 6 3 9 11 0"></polyline>
-        </g>
-    </g>
-</svg>`
-
-
-const Steps = ({ recipe }: Recipe, { navigation }: NavigationInjectedProps) => {
+const Steps = ({ steps, recipeId, navigation }: StepsProps) => {
 
   const [activeStep, setActiveStep] = React.useState(0);
-  const step = recipe.step[activeStep]
+  const step = steps[activeStep]
 
   return (
     <View>
-      {activeStep + 1 <= recipe.step.length ?
+      {activeStep + 1 <= steps.length ?
         <View>
-          {console.log(activeStep + 1, recipe.step.length)}
           <Image source={{ uri: step.src }} style={{ width: '100%', height: 500, borderRadius: 20 }} />
           <Text>{step.title}</Text>
           <Text>{step.description}</Text>
@@ -187,11 +171,11 @@ const Steps = ({ recipe }: Recipe, { navigation }: NavigationInjectedProps) => {
             <Text>Next</Text>
           </TouchableOpacity>
           <View style={{ display: 'flex', flexDirection: 'row' }}>
-            {recipe && recipe.step.map((step: Step, i: number) =>
+            {steps && steps.map((step, i: number) =>
               <View
                 key={i}
                 style={{
-                  width: `${100 / recipe.step.length}%`,
+                  width: `${100 / steps.length}%`,
                   height: 8,
                   backgroundColor: activeStep === i ? 'red' : 'blue'
                 }} />)}
@@ -202,7 +186,7 @@ const Steps = ({ recipe }: Recipe, { navigation }: NavigationInjectedProps) => {
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('Result', {
-                recipe: recipe.id,
+                recipeId: recipeId,
               });
             }}>
             <Text>Share Your Result</Text>
@@ -356,7 +340,7 @@ export const RecipeScreen = ({ navigation }: NavigationInjectedProps) => {
               </HeaderAction>
             </Header>
             <Modal isOpen={modalOpen} position={"center"} onClosed={() => setModalOpen(!modalOpen)}>
-              <Steps recipe={recipe && recipe} navigation={navigation} />
+              <Steps steps={recipe && recipe.step} recipeId={recipe.id} navigation={navigation} />
             </Modal>
             <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}>
               <DescriptionContainer style={{ height: expanded ? 'auto' : 55 }}>

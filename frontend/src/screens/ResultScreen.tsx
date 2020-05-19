@@ -1,19 +1,58 @@
-import React from 'react';
-import { Text, View, ScrollView, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { Recipe } from '../utils/types'
+import * as  ImagePicker from 'expo-image-picker';
+import * as  Permissions from 'expo-permissions';
+import React, { Component } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation'
-import { useFonts } from '@use-expo/font';
-import { DifficultyFeedQuery } from '../gql/queries/difficultyFeed'
-import { useQuery } from '@apollo/react-hooks';
-import { Header, Hero, Avatar, Paragraph, HeadlineTwo, SmallParagraph } from '../components'
-import { SvgXml } from 'react-native-svg';
-import { logo } from '../theme/icons'
+import getPermission from '../utils/getPermission';
+
+const options = {
+    allowsEditing: true,
+};
 
 export const ResultScreen = ({ navigation }: NavigationInjectedProps) => {
 
+    const selectPhoto = async () => {
+        const status = await getPermission(Permissions.CAMERA_ROLL);
+        if (status) {
+            const result = await ImagePicker.launchImageLibraryAsync(options);
+            if (!result.cancelled) {
+                navigation.navigate('Post', { image: result.uri });
+            }
+        }
+    };
+
+    const takePhoto = async () => {
+        const status = await getPermission(Permissions.CAMERA);
+        if (status) {
+            const result = await ImagePicker.launchCameraAsync(options);
+            if (!result.cancelled) {
+                navigation.navigate('Post', { image: result.uri });
+            }
+        }
+    };
+
     return (
-        <View>
-            <Text>This is the result screen</Text>
+        <View style={styles.container}>
+            <Text onPress={selectPhoto} style={styles.text}>
+                Select Photo
+        </Text>
+            <Text onPress={takePhoto} style={styles.text}>
+                Take Photo
+        </Text>
         </View>
     );
-} 
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    text: {
+        padding: 24,
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+});
