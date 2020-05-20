@@ -3,9 +3,9 @@ import styled from 'styled-components/native'
 import { SvgXml } from 'react-native-svg';
 import { useFonts } from '@use-expo/font';
 import fonts from '../theme/fonts'
-import { NavigationInjectedProps } from 'react-navigation'
+import { GestureResponderEvent } from 'react-native'
 
-const HeaderContainer = styled.View`
+const HeaderWrapper = styled.View`
   display: flex;
   flex-direction: row;
   padding: 52px 8px 8px 8px;
@@ -20,7 +20,7 @@ const Title = styled.Text`
   padding: 0 16px;
 `
 
-const ActionContainer = styled.TouchableOpacity`
+const HeaderAction = styled.TouchableOpacity`
   width: 10%;
   height: 50px;
   display: flex;
@@ -28,17 +28,21 @@ const ActionContainer = styled.TouchableOpacity`
   flex:1;
 `
 
-interface HeaderProps {
+interface IHeader {
   title: string,
-  renderLeft?: React.ReactChild,
-  renderRight?: React.ReactChild,
+  leftAction?: (event: GestureResponderEvent) => void,
+  leftIcon?: string | null,
+  rightAction?: (event: GestureResponderEvent) => void
+  rightIcon?: string | null
 }
 
 export const Header = (
   { title,
-    renderLeft,
-    renderRight
-  }: HeaderProps) => {
+    leftAction,
+    leftIcon,
+    rightAction,
+    rightIcon,
+  }: IHeader) => {
 
   // Get Fonts
 
@@ -49,18 +53,14 @@ export const Header = (
   });
 
   return (
-    <HeaderContainer>
-      {renderLeft}
+    <HeaderWrapper>
+      <HeaderAction onPress={leftAction}>
+        <SvgXml xml={leftIcon ? leftIcon : null} />
+      </HeaderAction>
       <Title style={fontsLoaded && { fontFamily: fonts.primary }}>{title}</Title>
-      {renderRight}
-    </HeaderContainer>
-  );
-}
-
-export const HeaderAction = (icon: string, action: React.SyntheticEvent) => {
-  return (
-    <ActionContainer onPress={() => { action }}>
-      <SvgXml xml={icon} />
-    </ActionContainer>
+      <HeaderAction onPress={rightAction}>
+        <SvgXml xml={rightIcon ? rightIcon : null} />
+      </HeaderAction>
+    </HeaderWrapper>
   );
 }

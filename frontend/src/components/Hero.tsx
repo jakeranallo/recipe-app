@@ -38,7 +38,13 @@ const HeroContainer = styled.View`
   flex: 1;
 `
 
-export const Hero = ({ imgOne, imgTwo, imgThree }) => {
+interface IHero {
+  imgOne: string,
+  imgTwo: string,
+  imgThree: string
+}
+
+export const Hero = ({ imgOne, imgTwo, imgThree }: IHero) => {
   return (
     <HeroContainer>
       <MainTile>

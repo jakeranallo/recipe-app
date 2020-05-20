@@ -22,8 +22,7 @@ const HeadlineTwoContainer = styled.Text`
   color: white;
 `
 
-
-export const Paragraph = ({ children }) => {
+export const Paragraph = ({ children, numberOfLines, color }) => {
 
   const [fontsLoaded] = useFonts({
     'Neuton-Bold': require('../../assets/fonts/Neuton-Bold.ttf'),
@@ -32,7 +31,7 @@ export const Paragraph = ({ children }) => {
   });
 
   return (
-    <ParagraphContainer style={{ fontFamily: fontsLoaded ? fonts.secondary : 'Helvetica' }}>{children}</ParagraphContainer>
+    <ParagraphContainer numberOfLines={numberOfLines} style={{ fontFamily: fontsLoaded ? fonts.secondary : 'Helvetica', color: color }}>{children}</ParagraphContainer>
   );
 }
 
@@ -49,7 +48,7 @@ export const SmallParagraph = ({ children }) => {
   );
 }
 
-export const HeadlineTwo = ({ children }) => {
+export const HeadlineTwo = ({ children, color }) => {
 
   const [fontsLoaded] = useFonts({
     'Neuton-Bold': require('../../assets/fonts/Neuton-Bold.ttf'),
@@ -58,6 +57,6 @@ export const HeadlineTwo = ({ children }) => {
   });
 
   return (
-    <HeadlineTwoContainer style={{ fontFamily: fontsLoaded ? fonts.tertiary : 'Helvetica' }}>{children}</HeadlineTwoContainer>
+    <HeadlineTwoContainer style={{ fontFamily: fontsLoaded ? fonts.tertiary : 'Helvetica', color: color }}>{children}</HeadlineTwoContainer>
   );
 }

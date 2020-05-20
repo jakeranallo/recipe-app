@@ -9,7 +9,7 @@ const AvatarContainer = styled.ImageBackground`
   overflow: hidden;
 `
 
-export const Avatar = ({ source }) => {
+export const Avatar = ({ source }: string) => {
   return (
     <AvatarContainer source={{ uri: source }} />
   );
