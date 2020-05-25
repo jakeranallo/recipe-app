@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components/native'
+import { colours } from '../theme'
 
 const TileImage = styled.ImageBackground`
   position: absolute;
   border-radius: 2px;
   margin: 4px;
-  background-color: red;
+  background-color: ${colours.strokeGrey};
   left: 0;
   right: 0;
   top: 0;
@@ -13,7 +14,7 @@ const TileImage = styled.ImageBackground`
   overflow: hidden;
 `
 
-const MainTile = styled.TouchableOpacity`
+const MainTile = styled.View`
   position: relative;
   width: 66.6%;
   padding-top: 66.6%;
@@ -26,7 +27,7 @@ const SideContainer = styled.View`
   justify-content: flex-start;
   width: 33.3%;
 `
-const SideTileContainer = styled.TouchableOpacity`
+const SideTileContainer = styled.View`
   position: relative;
   height:50%;
 `
@@ -39,9 +40,9 @@ const HeroContainer = styled.View`
 `
 
 interface IHero {
-  imgOne: string,
-  imgTwo: string,
-  imgThree: string
+  imgOne: string | undefined,
+  imgTwo: string | undefined,
+  imgThree: string | undefined
 }
 
 export const Hero = ({ imgOne, imgTwo, imgThree }: IHero) => {

@@ -10,6 +10,7 @@ const DifficultyFeedQuery = gql`
       imgTwo
       imgThree
       user {
+        id
         firstName
         lastName
         avatar

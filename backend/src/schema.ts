@@ -133,6 +133,18 @@ const Query = objectType({
       },
     })
 
+    t.list.field('singleUser', {
+      type: 'User',
+      args: {
+        userId: intArg({ nullable: true }),
+      },
+      resolve: (_, { userId }, ctx) => {
+        return ctx.prisma.user.findMany({
+          where: { id: { equals: userId } },
+        })
+      },
+    })
+
     t.list.field('searchRecipes', {
       type: 'Recipe',
       args: {

@@ -6,8 +6,6 @@ import { useFonts } from '@use-expo/font';
 import { DifficultyFeedQuery } from '../gql/queries/difficultyFeed'
 import { useQuery } from '@apollo/react-hooks';
 import { Header, Hero, Avatar, Paragraph, HeadlineTwo, SmallParagraph } from '../components'
-import { SvgXml } from 'react-native-svg';
-import { logo } from '../theme/icons'
 
 // Joshua Weissman
 // Perfect Loaf
@@ -26,7 +24,7 @@ export const FeedScreen = ({ navigation }: NavigationInjectedProps) => {
 
     return (
         <View>
-            <Header title='Beginner Recipes' renderLeft={<SvgXml xml={logo} />} />
+            <Header title='Beginner Recipes' />
             <ScrollView>
                 {!fontsLoaded && loading ? <Text>Loading...</Text> :
                     error ? <Text>{error}</Text> :
@@ -38,14 +36,23 @@ export const FeedScreen = ({ navigation }: NavigationInjectedProps) => {
                                         recipe: recipe,
                                     });
                                 }}>
-                                <Hero imgOne={recipe.imgOne} imgTwo={recipe.imgTwo} imgThree={recipe.imgThree} />
+                                <Hero
+                                    imgOne={recipe.imgOne}
+                                    imgTwo={recipe.imgTwo}
+                                    imgThree={recipe.imgThree} />
                                 <View style={{ display: 'flex', flexDirection: 'row', padding: 8 }}>
                                     <View style={{ marginRight: 8 }}>
                                         <Avatar
-                                            source={recipe.user && recipe.user.avatar} />
+                                            source={recipe.user && recipe.user.avatar}
+                                            onPress={() => {
+                                                navigation.navigate('Profile', {
+                                                    user: recipe.user && recipe.user.id,
+                                                });
+                                            }}
+                                        />
                                     </View>
                                     <View>
-                                        <HeadlineTwo>{recipe.title}</HeadlineTwo>
+                                        <HeadlineTwo color='white'>{recipe.title}</HeadlineTwo>
                                         <SmallParagraph>{recipe.user && `${recipe.user.firstName} ${recipe.user.lastName}`}</SmallParagraph>
                                     </View>
                                 </View>

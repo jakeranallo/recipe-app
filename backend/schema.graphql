@@ -39,6 +39,7 @@ type Query {
   recipe(where: RecipeWhereUniqueInput!): Recipe
   searchRecipes(searchString: String): [Recipe!]!
   singleRecipe(recipeId: Int): [Recipe!]!
+  singleUser(userId: Int): [User!]!
   user(where: UserWhereUniqueInput!): User
 }
 
