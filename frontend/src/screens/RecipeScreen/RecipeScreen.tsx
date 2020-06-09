@@ -86,7 +86,7 @@ export const RecipeScreen = ({ navigation }: NavigationInjectedProps) => {
               leftIcon={back}
               rightAction={() => { navigation.goBack() }}
               rightIcon={menu} />
-            <Modal isOpen={modalOpen} position={"center"} onClosed={() => setModalOpen(!modalOpen)}>
+            <Modal isOpen={modalOpen} position={"bottom"} onClosed={() => setModalOpen(!modalOpen)} swipeArea={500}>
               <Steps steps={recipe && recipe.step} recipeId={recipeId.id} navigation={navigation} />
             </Modal>
             <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colours.primary} />}>

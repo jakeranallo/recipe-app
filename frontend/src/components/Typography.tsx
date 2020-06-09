@@ -16,13 +16,25 @@ const SmallParagraphContainer = styled.Text`
   color: ${colors.textGrey};
 `
 
+const HeadlineOneContainer = styled.Text`
+  color: white;
+  font-size: 30px;
+  line-height: 26px;
+`
+
 const HeadlineTwoContainer = styled.Text`
   font-size: 16px;
   line-height: 22px;
   color: white;
 `
 
-export const Paragraph = ({ children, numberOfLines, color }) => {
+interface ITypography {
+  children: React.ReactChild
+  numberOfLines?: number
+  color?: string
+}
+
+export const Paragraph = ({ children, numberOfLines, color }: ITypography) => {
 
   const [fontsLoaded] = useFonts({
     'Neuton-Bold': require('../../assets/fonts/Neuton-Bold.ttf'),
@@ -35,7 +47,7 @@ export const Paragraph = ({ children, numberOfLines, color }) => {
   );
 }
 
-export const SmallParagraph = ({ children }) => {
+export const SmallParagraph = ({ children }: ITypography) => {
 
   const [fontsLoaded] = useFonts({
     'Neuton-Bold': require('../../assets/fonts/Neuton-Bold.ttf'),
@@ -48,15 +60,25 @@ export const SmallParagraph = ({ children }) => {
   );
 }
 
-export const HeadlineTwo = ({ children, color }) => {
+export const HeadlineTwo = ({ children, color }: ITypography) => {
 
   const [fontsLoaded] = useFonts({
-    'Neuton-Bold': require('../../assets/fonts/Neuton-Bold.ttf'),
     'Metropolis-Regular': require('../../assets/fonts/Metropolis-Regular.otf'),
     'Metropolis-SemiBold': require('../../assets/fonts/Metropolis-SemiBold.otf'),
   });
 
   return (
     <HeadlineTwoContainer style={{ fontFamily: fontsLoaded ? fonts.tertiary : 'Helvetica', color: color }}>{children}</HeadlineTwoContainer>
+  );
+}
+
+export const HeadlineOne = ({ children, color }: ITypography) => {
+
+  const [fontsLoaded] = useFonts({
+    'Neuton-Bold': require('../../assets/fonts/Neuton-Bold.ttf'),
+  });
+
+  return (
+    <HeadlineOneContainer style={{ fontFamily: fontsLoaded ? fonts.primary : 'Helvetica', color: color }}>{children}</HeadlineOneContainer>
   );
 }

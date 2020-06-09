@@ -1,6 +1,53 @@
 import React from 'react';
-import { Text, View, Image, TouchableOpacity } from 'react-native';
+import { View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import * as  ImagePicker from 'expo-image-picker';
+import * as  Permissions from 'expo-permissions';
 import { NavigationInjectedProps } from 'react-navigation'
+import styled from 'styled-components/native'
+import { colours } from '../../theme'
+import { Paragraph, HeadlineOne, HeadlineTwo, Button } from '../../components'
+import Modal from 'react-native-modalbox'
+import getPermission from '../../utils/getPermission';
+
+const HiddenButton = styled.TouchableOpacity`
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  z-index: 100;
+`
+
+const StepLozenge = styled.View`
+height: 4px;
+border-radius: 4px;
+`
+
+const Lozenges = styled.View`
+ display: flex;
+ flex-direction: row;
+ width: 100%;
+ padding: 0 8px;
+ position: absolute;
+ bottom: 24px;
+`
+
+const CompleteContainer = styled.View`
+width: 100%;
+height: 500px;
+border-radius: 20px;
+display: flex;
+align-items: center;
+justify-content: center;
+background-color: white;
+`
+
+const MenuButton = styled.TouchableOpacity`
+display: flex;
+align-items: center;
+padding: 16px;
+border-bottom-color: #E9EAEB;
+border-bottom-width: 1px;
+`
+
 
 type ISteps =
   NavigationInjectedProps &
@@ -14,52 +61,138 @@ type ISteps =
   } &
   { recipeId: number }
 
+type ICameraModal = NavigationInjectedProps & { recipeId: number }
+
+const options = {
+  allowsEditing: true,
+};
+
+export const CameraModal = ({ navigation, recipeId }: ICameraModal) => {
+
+  const selectPhoto = async () => {
+    const status = await getPermission(Permissions.CAMERA_ROLL);
+    if (status) {
+      const result = await ImagePicker.launchImageLibraryAsync(options);
+      if (!result.cancelled) {
+        const uri = result.uri;
+        const type = result.type;
+        const n = result.uri.lastIndexOf('/');
+        const name = result.uri.substring(n + 1);
+        const source = {
+          uri,
+          type,
+          name,
+        }
+        cloudinaryUpload(source)
+      }
+    }
+  };
+
+  const takePhoto = async () => {
+    const status = await getPermission(Permissions.CAMERA);
+    if (status) {
+      const result = await ImagePicker.launchCameraAsync(options);
+      if (!result.cancelled) {
+        navigation.navigate('Post', { image: result.uri });
+      }
+    }
+  };
+
+  const cloudinaryUpload = (source) => {
+    const data = new FormData()
+    data.append('file', source)
+    data.append('upload_preset', 'spruce-apparel')
+    fetch("https://api.cloudinary.com/v1_1/sprucepartners/upload", {
+      method: "post",
+      body: data
+    }).then(res => res.json()).
+      then(data => {
+        navigation.navigate('Post', { image: data.secure_url, recipeId })
+      }).catch(err => {
+        console.log("An Error Occured While Uploading")
+      })
+  }
+
+  return (
+    <View style={{ paddingBottom: 24 }}>
+      <MenuButton onPress={selectPhoto}>
+        <HeadlineTwo color={colours.secondary}>
+          Select Photo
+          </HeadlineTwo>
+      </MenuButton>
+      <MenuButton onPress={takePhoto}>
+        <HeadlineTwo color={colours.secondary}>
+          Take Photo
+          </HeadlineTwo>
+      </MenuButton>
+    </View>
+  );
+}
+
+
 
 export const Steps = ({ steps, recipeId, navigation }: ISteps) => {
 
   const [activeStep, setActiveStep] = React.useState(0);
   const step = steps[activeStep]
+  const [modalOpen, setModalOpen] = React.useState(false);
+  const [count, setCount] = React.useState(0);
+  const duration = 10000
+
+  React.useEffect(() => {
+    setCount(count => count = 0)
+  }, [activeStep]);
+
+  React.useEffect(() => {
+    if (count === duration) { setActiveStep(activeStep => activeStep + 1) };
+    const intervalId = setInterval(() => {
+      setCount(count + 100);
+    }, 100);
+    return () => clearInterval(intervalId);
+  }, [count]);
 
   return (
     <View>
+      <Modal style={{ height: 'auto' }} isOpen={modalOpen} position={"bottom"} onClosed={() => setModalOpen(!modalOpen)}>
+        <CameraModal recipeId={recipeId} navigation={navigation} />
+      </Modal>
       {activeStep + 1 <= steps.length ?
-        <View>
-          <Image source={{ uri: step.src }} style={{ width: '100%', height: 500, borderRadius: 20 }} />
-          <Text>{step.title}</Text>
-          <Text>{step.description}</Text>
-          <TouchableOpacity
-            onPress={() => activeStep === 0 ? null : setActiveStep(activeStep - 1)}>
-            <Text>Prev</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setActiveStep(activeStep + 1)}>
-            <Text>Next</Text>
-          </TouchableOpacity>
-          <View style={{ display: 'flex', flexDirection: 'row' }}>
+        <View style={{ backgroundColor: colours.secondary }}>
+          <ScrollView style={{ height: '100%' }}>
+            <HiddenButton
+              onPress={() => activeStep === 0 ? null : setActiveStep(activeStep - 1)}>
+            </HiddenButton>
+            <HiddenButton
+              onPress={() => setActiveStep(activeStep + 1)}
+              style={{ left: '50%' }}
+            >
+            </HiddenButton>
+            <Image source={{ uri: step.src }} style={{ width: '100%', height: 500, borderRadius: 20 }} />
+            <View style={{ padding: 24 }}>
+              <HeadlineOne color="white">{step.title}</HeadlineOne>
+              <Paragraph color="white">{step.description}</Paragraph>
+            </View>
+          </ScrollView>
+          <Lozenges>
             {steps && steps.map((step, i: number) =>
-              <View
-                key={i}
-                style={{
-                  width: `${100 / steps.length}%`,
-                  height: 8,
-                  backgroundColor: activeStep === i ? 'red' : 'blue'
-                }} />)}
-          </View>
+              <View key={i} style={{ paddingLeft: 1, paddingRight: 1, width: `${100 / steps.length}%`, }}>
+                <StepLozenge
+                  style={{
+                    backgroundColor: activeStep === i ? 'white' : colours.strokeGrey
+                  }} >{activeStep === i && <View style={{ borderRadius: 2, height: 4, backgroundColor: colours.positive, width: `${(count / duration) * 100}%` }}></View>}</StepLozenge>
+              </View>
+            )}
+          </Lozenges>
         </View> :
-        <View style={{ paddingTop: 40 }}>
-          <Text>Recipe Complete</Text>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Result', {
-                recipeId: recipeId,
-              });
-            }}>
-            <Text>Share Your Result</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setActiveStep(0)}>
-            <Text>Start Again</Text>
-          </TouchableOpacity>
+        <View style={{ backgroundColor: colours.secondary, height: '100%' }}>
+          <CompleteContainer>
+            <HeadlineOne color={colours.secondary}>Recipe Complete</HeadlineOne>
+            <Button label="Share Your Result" onPress={() => setModalOpen(!modalOpen)}>Share Your Result</Button>
+            <TouchableOpacity
+              onPress={() => setActiveStep(0)}>
+              <HeadlineTwo>Start Again</HeadlineTwo>
+            </TouchableOpacity>
+          </CompleteContainer>
         </View>
       }
     </View>
