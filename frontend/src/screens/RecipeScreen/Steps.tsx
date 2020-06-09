@@ -1,13 +1,17 @@
 import React from 'react';
-import { View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Image, Text, TouchableOpacity, ScrollView } from 'react-native';
 import * as  ImagePicker from 'expo-image-picker';
 import * as  Permissions from 'expo-permissions';
 import { NavigationInjectedProps } from 'react-navigation'
 import styled from 'styled-components/native'
-import { colours } from '../../theme'
-import { Paragraph, HeadlineOne, HeadlineTwo, Button } from '../../components'
+import { colours, icons } from '../../theme'
+import { Paragraph, HeadlineOne, Button, Avatar, Hero, HeadlineTwo, SmallParagraph } from '../../components'
 import Modal from 'react-native-modalbox'
 import getPermission from '../../utils/getPermission';
+import { SvgXml } from 'react-native-svg';
+import { useQuery } from '@apollo/react-hooks';
+import { useNavigationParam } from 'react-navigation-hooks'
+import { SingleUserQuery } from '../../gql/queries/singleUser'
 
 const HiddenButton = styled.TouchableOpacity`
   width: 50%;
@@ -17,37 +21,99 @@ const HiddenButton = styled.TouchableOpacity`
 `
 
 const StepLozenge = styled.View`
-height: 4px;
-border-radius: 4px;
+  height: 4px;
+  border-radius: 4px;
 `
 
 const Lozenges = styled.View`
- display: flex;
- flex-direction: row;
- width: 100%;
- padding: 0 8px;
- position: absolute;
- bottom: 24px;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 0 8px;
+  position: absolute;
+  bottom: 24px;
 `
 
 const CompleteContainer = styled.View`
-width: 100%;
-height: 500px;
-border-radius: 20px;
-display: flex;
-align-items: center;
-justify-content: center;
-background-color: white;
+  width: 100%;
+  height: 500px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
 `
 
 const MenuButton = styled.TouchableOpacity`
-display: flex;
-align-items: center;
-padding: 16px;
-border-bottom-color: #E9EAEB;
-border-bottom-width: 1px;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom-color: #E9EAEB;
+  border-bottom-width: 1px;
 `
 
+export const ProfileSection = ({ navigation }: NavigationInjectedProps) => {
+
+  const userId = useNavigationParam('user');
+  const { loading, error, data } = useQuery(SingleUserQuery, {
+    variables: { userId },
+  });
+  const user = data && data.singleUser[0]
+
+  return (
+    <>
+      {loading ? <Text>Loading...</Text> :
+        error ? <Text>{error.message}</Text> : user &&
+          <>
+            <View style={{ display: 'flex', flexDirection: 'column', padding: 16, }}>
+              <View style={{ marginBottom: 16 }}>
+                <Paragraph color='white'>That’s it! Enjoy your fresh sourdough bread and the addiction that will surely follow as you make more and more loaves in the future.</Paragraph>
+              </View>
+              <View style={{ display: 'flex', flexDirection: 'row' }}>
+                <View style={{ marginRight: 8 }}>
+                  <Avatar
+                    source={user && user.avatar}
+                    onPress={() => {
+                      navigation.navigate('Profile', {
+                        user: user && user.id,
+                      });
+                    }}
+                  />
+                </View>
+                <View>
+                  <SmallParagraph>{user.firstName} {user.lastName}</SmallParagraph>
+                  <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <HeadlineTwo color={colours.primary}>Visit {user.firstName}'s YouTube</HeadlineTwo>
+                    <SvgXml style={{marginLeft: 8}} xml={icons.arrowBeige} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+            <ScrollView>
+              {user.recipes.map((recipe, i) =>
+                <TouchableOpacity
+                  key={i}
+                  onPress={() => {
+                    navigation.navigate('Recipe', {
+                      recipe: recipe,
+                    });
+                  }}>
+                  <Hero
+                    imgOne={recipe.imgOne}
+                    imgTwo={recipe.imgTwo}
+                    imgThree={recipe.imgThree} />
+                  <View style={{ padding: 8 }}>
+                    <HeadlineTwo color='white'>{recipe.title}</HeadlineTwo>
+                    <SmallParagraph>{recipe.results.length} Results</SmallParagraph>
+                  </View>
+                </TouchableOpacity>
+              )}
+            </ScrollView>
+          </>
+      }
+    </>
+  )
+}
 
 type ISteps =
   NavigationInjectedProps &
@@ -59,7 +125,7 @@ type ISteps =
       description: string
     }]
   } &
-  { recipeId: number }
+  { recipeId: number, userId: number }
 
 type ICameraModal = NavigationInjectedProps & { recipeId: number }
 
@@ -129,9 +195,7 @@ export const CameraModal = ({ navigation, recipeId }: ICameraModal) => {
   );
 }
 
-
-
-export const Steps = ({ steps, recipeId, navigation }: ISteps) => {
+export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
 
   const [activeStep, setActiveStep] = React.useState(0);
   const step = steps[activeStep]
@@ -184,16 +248,22 @@ export const Steps = ({ steps, recipeId, navigation }: ISteps) => {
             )}
           </Lozenges>
         </View> :
-        <View style={{ backgroundColor: colours.secondary, height: '100%' }}>
+        <ScrollView style={{ backgroundColor: colours.secondary, height: '100%' }}>
           <CompleteContainer>
-            <HeadlineOne color={colours.secondary}>Recipe Complete</HeadlineOne>
-            <Button label="Share Your Result" onPress={() => setModalOpen(!modalOpen)}>Share Your Result</Button>
+            <SvgXml xml={icons.congrats} />
+            <View style={{ marginTop: 16, marginBottom: 32 }}>
+              <HeadlineOne color={colours.secondary}>Recipe Complete!</HeadlineOne>
+            </View>
+            <Button label="Share Your Result" onPress={() => setModalOpen(!modalOpen)} icon={icons.camera} />
             <TouchableOpacity
-              onPress={() => setActiveStep(0)}>
+              onPress={() => setActiveStep(0)}
+              style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 16 }}>
+              <SvgXml style={{marginRight: 8}} xml={icons.arrowBlack} />
               <HeadlineTwo>Start Again</HeadlineTwo>
             </TouchableOpacity>
           </CompleteContainer>
-        </View>
+          <ProfileSection navigation={navigation} />
+        </ScrollView>
       }
     </View>
   )

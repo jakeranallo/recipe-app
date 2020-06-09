@@ -24,6 +24,9 @@ const SingleRecipeQuery = gql`
         title
         description
       }
+      user {
+        id
+      }
     }
   }
 `;
