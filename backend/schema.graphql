@@ -184,6 +184,7 @@ type Step {
   description: String
   duration: String
   id: Int!
+  notify: Int
   recipe: Recipe
   recipeId: Int
   src: String
@@ -198,6 +199,7 @@ input StepCreateManyWithoutRecipeInput {
 input StepCreateWithoutRecipeInput {
   description: String
   duration: String
+  notify: Int
   resources: ResourceCreateManyWithoutStepInput
   src: String
   title: String!

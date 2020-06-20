@@ -105,6 +105,7 @@ const Step = objectType({
     t.model.src()
     t.model.recipeId()
     t.model.recipe()
+    t.model.notify()
   },
 })
 

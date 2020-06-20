@@ -49,6 +49,7 @@ model Step {
   title       String
   recipe      Recipe?    @relation(fields: [recipeId], references: [id])
   resources    Resource[]
+  notify Int?
 }
 
 model IngredientCategory {
