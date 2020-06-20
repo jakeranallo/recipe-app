@@ -17,9 +17,10 @@ import { Video } from 'expo-av';
 
 const HiddenButton = styled.TouchableOpacity`
   width: 50%;
-  height: 100%;
+  height: 600px;
   position: absolute;
   z-index: 100;
+  top:0;
 `
 
 const StepLozenge = styled.View`
@@ -205,7 +206,7 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
   const step = steps[activeStep]
   const [modalOpen, setModalOpen] = React.useState(false);
   const [count, setCount] = React.useState(0);
-  const duration = 10000
+  const [duration, setDuration] = React.useState(10000);
 
   const getDuration = (duration: number) => {
     const momentDuration = moment.duration(duration);
@@ -221,15 +222,21 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
   }, [activeStep]);
 
   React.useEffect(() => {
-    if (count === duration) { setActiveStep(activeStep => activeStep + 1) };
+    if (count >= duration) { setActiveStep(activeStep => activeStep + 1) };
     const intervalId = setInterval(() => {
       setCount(count + 100);
     }, 100);
     return () => clearInterval(intervalId);
   }, [count]);
 
-  const filename = 'https://res.cloudinary.com/sprucepartners/video/upload/v1566194147/tooltips_coffvj.mov'
-
+  const onVideoLoad = (data) => {
+    setDuration(count => count = (data.durationMillis - 600))
+  };
+  
+  const onImgLoad = (data) => {
+    setDuration(count => count = 10000)
+  };
+  
   return (
     <View>
       <Modal style={{ height: 'auto' }} isOpen={modalOpen} position={"bottom"} onClosed={() => setModalOpen(!modalOpen)}>
@@ -246,15 +253,17 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
               style={{ left: '50%' }}
             >
             </HiddenButton>
-            {step && step.src.split('.').pop() === ('mov' || 'mp4') ?
+            {step && step.src.split('.').pop() === ('mp4') ?
               < Video
-                source={{ uri: 'https://res.cloudinary.com/sprucepartners/video/upload/v1566194147/tooltips_coffvj.mov' }}
+                source={{ uri: step.src }}
                 shouldPlay
                 isLooping
-                style={{ width: "100%", height: 600, borderRadius: 20 }}
+                onLoad={onVideoLoad}
+                resizeMode="cover"
+                style={{ aspectRatio: 3 / 4, borderRadius: 20 }}
               />
               :
-              <Image source={{ uri: step && step.src }} style={{ width: '100%', height: 600, borderRadius: 20 }} />
+              <Image onLoad={onImgLoad} source={{ uri: step && step.src }} style={{ aspectRatio: 3 / 4, borderRadius: 20 }} />
             }
             <View style={{ padding: 24, marginBottom: 32 }}>
               <HeadlineOne color="white">{step.title}</HeadlineOne>
@@ -272,12 +281,12 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
               <Paragraph color="white">{step.description}</Paragraph>
 
               <View>
-                {step.resources.length >= 1 && <><HeadlineTwo color={colours.primary}>Related</HeadlineTwo>
-                    {step.resources.map((resource, i) =>
-                      <TouchableOpacity>
-                        <Paragraph color={colours.primary}>{resource.title}</Paragraph>
-                      </TouchableOpacity>)}
-              </>}
+                {step.resources.length >= 1 && <><HeadlineTwo color={colours.primary}>Helpful Info</HeadlineTwo>
+                  {step.resources.map((resource, i) =>
+                    <TouchableOpacity>
+                      <Paragraph color={colours.primary}>{resource.title}</Paragraph>
+                    </TouchableOpacity>)}
+                </>}
               </View>
 
             </View>
