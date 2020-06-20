@@ -7,6 +7,14 @@ datasource db {
   url      = "file:./dev.db"
 }
 
+model Resource {
+  id     Int    @default(autoincrement()) @id
+  src    String
+  stepId Int?
+  step   Step?  @relation(fields: [stepId], references: [id])
+  title  String
+}
+
 model Result {
   id       Int     @default(autoincrement()) @id
   img      String
@@ -28,44 +36,25 @@ model Recipe {
   userId      Int?
   user        User?        @relation(fields: [userId], references: [id])
   results      Result[]
-  steps        Step[]
   ingredients  Ingredient[]
 }
 
-model Resource {
-  id     Int    @default(autoincrement()) @id
-  src    String
-  stepId Int?
-  title  String
-  step   Step?  @relation(fields: [stepId], references: [id])
-}
-
-model Step {
-  description String?
-  duration    String?
-  id          Int        @default(autoincrement()) @id
-  recipeId    Int?
-  src         String?
-  title       String
-  recipe      Recipe?    @relation(fields: [recipeId], references: [id])
-  resources    Resource[]
+model Ingredient {
+  amount   String?
+  id       Int     @default(autoincrement()) @id
+  name     String
+  recipeId Int?
+  categoryId Int?
+  recipe   Recipe? @relation(fields: [recipeId], references: [id])
+  category   IngredientCategory? @relation(fields: [categoryId], references: [id])
 }
 
 model IngredientCategory {
-  id         Int          @default(autoincrement()) @id
-  name       String
+  id       Int     @default(autoincrement()) @id
+  name     String
   ingredients Ingredient[]
 }
 
-model Ingredient {
-  amount             String?
-  categoryId         Int?
-  id                 Int                 @default(autoincrement()) @id
-  name               String
-  recipeId           Int?
-  category IngredientCategory? @relation(fields: [categoryId], references: [id])
-  recipe             Recipe?             @relation(fields: [recipeId], references: [id])
-}
 
 model User {
   avatar    String?
@@ -76,4 +65,14 @@ model User {
   userName  String?
   results    Result[]
   recipes    Recipe[]
+}
+
+model Step {
+  description String?
+  duration    String?
+  id          Int     @default(autoincrement()) @id
+  recipeId    Int?
+  src         String?
+  title       String
+  recipe      Recipe? @relation(fields: [recipeId], references: [id])
 }

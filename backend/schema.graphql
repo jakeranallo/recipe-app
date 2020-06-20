@@ -4,11 +4,31 @@
 
 type Ingredient {
   amount: String
-  category: String
+  category: IngredientCategory
+  categoryId: Int
   id: Int!
   name: String!
   recipe: Recipe
   recipeId: Int
+}
+
+type IngredientCategory {
+  id: Int!
+  ingredients: [Ingredient!]!
+  name: String!
+}
+
+input IngredientCategoryCreateOneWithoutIngredientsInput {
+  connect: IngredientCategoryWhereUniqueInput
+  create: IngredientCategoryCreateWithoutIngredientsInput
+}
+
+input IngredientCategoryCreateWithoutIngredientsInput {
+  name: String!
+}
+
+input IngredientCategoryWhereUniqueInput {
+  id: Int
 }
 
 input IngredientCreateManyWithoutRecipeInput {
@@ -18,7 +38,7 @@ input IngredientCreateManyWithoutRecipeInput {
 
 input IngredientCreateWithoutRecipeInput {
   amount: String
-  category: String
+  category: IngredientCategoryCreateOneWithoutIngredientsInput
   name: String!
 }
 
@@ -53,7 +73,7 @@ type Recipe {
   imgTwo: String
   ingredients: [Ingredient!]!
   results: [Result!]!
-  step: [Step!]!
+  steps: [Step!]!
   title: String!
   user: User
   userId: Int
@@ -77,7 +97,7 @@ input RecipeCreateWithoutResultsInput {
   imgThree: String
   imgTwo: String
   ingredients: IngredientCreateManyWithoutRecipeInput
-  step: StepCreateManyWithoutRecipeInput
+  steps: StepCreateManyWithoutRecipeInput
   title: String!
   user: UserCreateOneWithoutRecipesInput
 }
@@ -91,7 +111,7 @@ input RecipeCreateWithoutUserInput {
   imgTwo: String
   ingredients: IngredientCreateManyWithoutRecipeInput
   results: ResultCreateManyWithoutRecipeInput
-  step: StepCreateManyWithoutRecipeInput
+  steps: StepCreateManyWithoutRecipeInput
   title: String!
 }
 
@@ -178,7 +198,7 @@ input StepCreateManyWithoutRecipeInput {
 input StepCreateWithoutRecipeInput {
   description: String
   duration: String
-  resource: ResourceCreateManyWithoutStepInput
+  resources: ResourceCreateManyWithoutStepInput
   src: String
   title: String!
 }
@@ -195,6 +215,7 @@ type User {
   lastName: String!
   recipes: [Recipe!]!
   results: [Result!]!
+  userName: String
 }
 
 input UserCreateInput {
@@ -204,6 +225,7 @@ input UserCreateInput {
   lastName: String!
   recipes: RecipeCreateManyWithoutUserInput
   results: ResultCreateManyWithoutUserInput
+  userName: String
 }
 
 input UserCreateOneWithoutRecipesInput {
@@ -222,6 +244,7 @@ input UserCreateWithoutRecipesInput {
   firstName: String!
   lastName: String!
   results: ResultCreateManyWithoutUserInput
+  userName: String
 }
 
 input UserCreateWithoutResultsInput {
@@ -230,6 +253,7 @@ input UserCreateWithoutResultsInput {
   firstName: String!
   lastName: String!
   recipes: RecipeCreateManyWithoutUserInput
+  userName: String
 }
 
 input UserWhereUniqueInput {

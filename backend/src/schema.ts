@@ -11,6 +11,7 @@ const User = objectType({
     t.model.id()
     t.model.firstName()
     t.model.lastName()
+    t.model.userName()
     t.model.avatar()
     t.model.email()
     t.model.recipes({
@@ -41,7 +42,7 @@ const Recipe = objectType({
     t.model.results({
       pagination: false,
     })
-    t.model.step({
+    t.model.steps({
       pagination: false,
     })
   },
@@ -74,11 +75,23 @@ const Ingredient = objectType({
   name: 'Ingredient',
   definition(t) {
     t.model.id()
+    t.model.categoryId()
     t.model.category()
     t.model.name()
     t.model.amount()
     t.model.recipeId()
     t.model.recipe()
+  },
+})
+
+const IngredientCategory = objectType({
+  name: 'IngredientCategory',
+  definition(t) {
+    t.model.id()
+    t.model.name()
+    t.model.ingredients({
+      pagination: false,
+    })
   },
 })
 
@@ -209,7 +222,7 @@ const Mutation = objectType({
 })
 
 export const schema = makeSchema({
-  types: [Query, Mutation, User, Recipe, Result, Resource, Step, Ingredient],
+  types: [Query, Mutation, User, Recipe, Result, Resource, Step, Ingredient, IngredientCategory],
   plugins: [nexusPrismaPlugin()],
   outputs: {
     schema: __dirname + '/../schema.graphql',
