@@ -13,6 +13,7 @@ import { useQuery } from '@apollo/react-hooks';
 import { useNavigationParam } from 'react-navigation-hooks'
 import { SingleUserQuery } from '../../gql/queries/singleUser'
 import moment from 'moment'
+import { Video } from 'expo-av';
 
 const HiddenButton = styled.TouchableOpacity`
   width: 50%;
@@ -227,7 +228,9 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
     return () => clearInterval(intervalId);
   }, [count]);
 
+  const filename = 'https://res.cloudinary.com/sprucepartners/video/upload/v1566194147/tooltips_coffvj.mov'
 
+  console.log(step.src.split('.').pop() === 'mov' || 'mp4')
 
   return (
     <View>
@@ -245,16 +248,27 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
               style={{ left: '50%' }}
             >
             </HiddenButton>
-            <Image source={{ uri: step.src }} style={{ width: '100%', height: 600, borderRadius: 20 }} />
+            {step.src.split('.').pop() === ('mov' || 'mp4') ?
+              < Video
+                source={{ uri: 'https://res.cloudinary.com/sprucepartners/video/upload/v1566194147/tooltips_coffvj.mov' }}
+                shouldPlay
+                isLooping
+                style={{ width: "100%", height: 600, borderRadius: 20 }}
+              />
+              :
+              <Image source={{ uri: step.src }} style={{ width: '100%', height: 600, borderRadius: 20 }} />
+            }
             <View style={{ padding: 24, marginBottom: 32 }}>
               <HeadlineOne color="white">{step.title}</HeadlineOne>
               <View style={{ marginBottom: 16 }}>
-                <HeadlineTwo color={colours.primary}>{step ? getDuration(step.duration) : 0}</HeadlineTwo>
                 {step.notify === 1 &&
-                <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                  <HeadlineTwo color={colours.primary}>Notify Me</HeadlineTwo>
-                  <SvgXml style={{ marginLeft: 8 }} xml={icons.arrowBeige} />
-                </TouchableOpacity>
+                  <>
+                    <HeadlineTwo color={colours.primary}>{step ? getDuration(step.duration) : 0}</HeadlineTwo>
+                    <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <HeadlineTwo color={colours.primary}>Notify Me</HeadlineTwo>
+                      <SvgXml style={{ marginLeft: 8 }} xml={icons.arrowBeige} />
+                    </TouchableOpacity>
+                  </>
                 }
               </View>
               <Paragraph color="white">{step.description}</Paragraph>
