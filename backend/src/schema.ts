@@ -36,7 +36,7 @@ const Recipe = objectType({
     t.model.imgThree()
     t.model.userId()
     t.model.user()
-    t.model.ingredients({
+    t.model.ingredientCategories({
       pagination: false,
     })
     t.model.results({
@@ -79,8 +79,6 @@ const Ingredient = objectType({
     t.model.category()
     t.model.name()
     t.model.amount()
-    t.model.recipeId()
-    t.model.recipe()
   },
 })
 
@@ -89,6 +87,8 @@ const IngredientCategory = objectType({
   definition(t) {
     t.model.id()
     t.model.name()
+    t.model.recipeId()
+    t.model.recipe()
     t.model.ingredients({
       pagination: false,
     })
@@ -106,6 +106,9 @@ const Step = objectType({
     t.model.recipeId()
     t.model.recipe()
     t.model.notify()
+    t.model.resources({
+      pagination: false,
+    })
   },
 })
 

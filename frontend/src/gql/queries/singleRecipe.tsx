@@ -12,13 +12,12 @@ const SingleRecipeQuery = gql`
         id
         img
       }
-      ingredients {
+      ingredientCategories {
         id
-        category {
+        ingredients {
           name
         }
         name
-        amount
       }
       steps {
         id
@@ -27,6 +26,11 @@ const SingleRecipeQuery = gql`
         description
         duration
         notify
+        resources {
+          id
+          title
+          src
+        }
       }
       user {
         id

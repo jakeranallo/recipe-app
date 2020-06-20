@@ -230,8 +230,6 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
 
   const filename = 'https://res.cloudinary.com/sprucepartners/video/upload/v1566194147/tooltips_coffvj.mov'
 
-  console.log(step.src.split('.').pop() === 'mov' || 'mp4')
-
   return (
     <View>
       <Modal style={{ height: 'auto' }} isOpen={modalOpen} position={"bottom"} onClosed={() => setModalOpen(!modalOpen)}>
@@ -248,7 +246,7 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
               style={{ left: '50%' }}
             >
             </HiddenButton>
-            {step.src.split('.').pop() === ('mov' || 'mp4') ?
+            {step && step.src.split('.').pop() === ('mov' || 'mp4') ?
               < Video
                 source={{ uri: 'https://res.cloudinary.com/sprucepartners/video/upload/v1566194147/tooltips_coffvj.mov' }}
                 shouldPlay
@@ -256,7 +254,7 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
                 style={{ width: "100%", height: 600, borderRadius: 20 }}
               />
               :
-              <Image source={{ uri: step.src }} style={{ width: '100%', height: 600, borderRadius: 20 }} />
+              <Image source={{ uri: step && step.src }} style={{ width: '100%', height: 600, borderRadius: 20 }} />
             }
             <View style={{ padding: 24, marginBottom: 32 }}>
               <HeadlineOne color="white">{step.title}</HeadlineOne>
@@ -272,6 +270,16 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
                 }
               </View>
               <Paragraph color="white">{step.description}</Paragraph>
+
+              <View>
+                {step.resources.length >= 1 && <><HeadlineTwo color={colours.primary}>Related</HeadlineTwo>
+                    {step.resources.map((resource, i) =>
+                      <TouchableOpacity>
+                        <Paragraph color={colours.primary}>{resource.title}</Paragraph>
+                      </TouchableOpacity>)}
+              </>}
+              </View>
+
             </View>
           </ScrollView>
           <Lozenges>

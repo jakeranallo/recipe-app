@@ -8,22 +8,23 @@ type Ingredient {
   categoryId: Int
   id: Int!
   name: String!
-  recipe: Recipe
-  recipeId: Int
 }
 
 type IngredientCategory {
   id: Int!
   ingredients: [Ingredient!]!
   name: String!
+  recipe: Recipe
+  recipeId: Int
 }
 
-input IngredientCategoryCreateOneWithoutIngredientsInput {
-  connect: IngredientCategoryWhereUniqueInput
-  create: IngredientCategoryCreateWithoutIngredientsInput
+input IngredientCategoryCreateManyWithoutRecipeInput {
+  connect: [IngredientCategoryWhereUniqueInput!]
+  create: [IngredientCategoryCreateWithoutRecipeInput!]
 }
 
-input IngredientCategoryCreateWithoutIngredientsInput {
+input IngredientCategoryCreateWithoutRecipeInput {
+  ingredients: IngredientCreateManyWithoutCategoryInput
   name: String!
 }
 
@@ -31,14 +32,13 @@ input IngredientCategoryWhereUniqueInput {
   id: Int
 }
 
-input IngredientCreateManyWithoutRecipeInput {
+input IngredientCreateManyWithoutCategoryInput {
   connect: [IngredientWhereUniqueInput!]
-  create: [IngredientCreateWithoutRecipeInput!]
+  create: [IngredientCreateWithoutCategoryInput!]
 }
 
-input IngredientCreateWithoutRecipeInput {
+input IngredientCreateWithoutCategoryInput {
   amount: String
-  category: IngredientCategoryCreateOneWithoutIngredientsInput
   name: String!
 }
 
@@ -71,7 +71,7 @@ type Recipe {
   imgOne: String
   imgThree: String
   imgTwo: String
-  ingredients: [Ingredient!]!
+  ingredientCategories: [IngredientCategory!]!
   results: [Result!]!
   steps: [Step!]!
   title: String!
@@ -96,7 +96,7 @@ input RecipeCreateWithoutResultsInput {
   imgOne: String
   imgThree: String
   imgTwo: String
-  ingredients: IngredientCreateManyWithoutRecipeInput
+  ingredientCategories: IngredientCategoryCreateManyWithoutRecipeInput
   steps: StepCreateManyWithoutRecipeInput
   title: String!
   user: UserCreateOneWithoutRecipesInput
@@ -109,7 +109,7 @@ input RecipeCreateWithoutUserInput {
   imgOne: String
   imgThree: String
   imgTwo: String
-  ingredients: IngredientCreateManyWithoutRecipeInput
+  ingredientCategories: IngredientCategoryCreateManyWithoutRecipeInput
   results: ResultCreateManyWithoutRecipeInput
   steps: StepCreateManyWithoutRecipeInput
   title: String!
@@ -187,6 +187,7 @@ type Step {
   notify: Int
   recipe: Recipe
   recipeId: Int
+  resources: [Resource!]!
   src: String
   title: String!
 }
