@@ -182,7 +182,7 @@ input ResultWhereUniqueInput {
 
 type Step {
   description: String
-  duration: String
+  duration: Int
   id: Int!
   notify: Int
   recipe: Recipe
@@ -198,7 +198,7 @@ input StepCreateManyWithoutRecipeInput {
 
 input StepCreateWithoutRecipeInput {
   description: String
-  duration: String
+  duration: Int
   notify: Int
   resources: ResourceCreateManyWithoutStepInput
   src: String

@@ -12,6 +12,7 @@ import { SvgXml } from 'react-native-svg';
 import { useQuery } from '@apollo/react-hooks';
 import { useNavigationParam } from 'react-navigation-hooks'
 import { SingleUserQuery } from '../../gql/queries/singleUser'
+import moment from 'moment'
 
 const HiddenButton = styled.TouchableOpacity`
   width: 50%;
@@ -84,7 +85,7 @@ export const ProfileSection = ({ navigation }: NavigationInjectedProps) => {
                   <SmallParagraph>{user.firstName} {user.lastName}</SmallParagraph>
                   <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <HeadlineTwo color={colours.primary}>Visit {user.firstName}'s YouTube</HeadlineTwo>
-                    <SvgXml style={{marginLeft: 8}} xml={icons.arrowBeige} />
+                    <SvgXml style={{ marginLeft: 8 }} xml={icons.arrowBeige} />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -122,7 +123,9 @@ type ISteps =
     [{
       src: string,
       title: string,
-      description: string
+      description: string,
+      duration: number,
+      notify: number
     }]
   } &
   { recipeId: number, userId: number }
@@ -203,6 +206,15 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
   const [count, setCount] = React.useState(0);
   const duration = 10000
 
+  const getDuration = (duration: number) => {
+    const momentDuration = moment.duration(duration);
+    const durationHours = momentDuration.hours()
+    const durationMinutes = momentDuration.minutes()
+    return (
+      (durationHours > 0 ? `${durationHours} hours ` : '') + (durationMinutes > 0 ? `${durationMinutes} minutes` : '')
+    )
+  }
+
   React.useEffect(() => {
     setCount(count => count = 0)
   }, [activeStep]);
@@ -214,6 +226,8 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
     }, 100);
     return () => clearInterval(intervalId);
   }, [count]);
+
+
 
   return (
     <View>
@@ -231,9 +245,18 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
               style={{ left: '50%' }}
             >
             </HiddenButton>
-            <Image source={{ uri: step.src }} style={{ width: '100%', height: 500, borderRadius: 20 }} />
-            <View style={{ padding: 24 }}>
+            <Image source={{ uri: step.src }} style={{ width: '100%', height: 600, borderRadius: 20 }} />
+            <View style={{ padding: 24, marginBottom: 32 }}>
               <HeadlineOne color="white">{step.title}</HeadlineOne>
+              <View style={{ marginBottom: 16 }}>
+                <HeadlineTwo color={colours.primary}>{step ? getDuration(step.duration) : 0}</HeadlineTwo>
+                {step.notify === 1 &&
+                <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                  <HeadlineTwo color={colours.primary}>Notify Me</HeadlineTwo>
+                  <SvgXml style={{ marginLeft: 8 }} xml={icons.arrowBeige} />
+                </TouchableOpacity>
+                }
+              </View>
               <Paragraph color="white">{step.description}</Paragraph>
             </View>
           </ScrollView>
@@ -258,7 +281,7 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
             <TouchableOpacity
               onPress={() => setActiveStep(0)}
               style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 16 }}>
-              <SvgXml style={{marginRight: 8}} xml={icons.arrowBlack} />
+              <SvgXml style={{ marginRight: 8 }} xml={icons.arrowBlack} />
               <HeadlineTwo>Start Again</HeadlineTwo>
             </TouchableOpacity>
           </CompleteContainer>

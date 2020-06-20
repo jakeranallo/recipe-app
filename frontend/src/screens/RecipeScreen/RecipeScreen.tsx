@@ -81,7 +81,7 @@ export const RecipeScreen = ({ navigation }: NavigationInjectedProps) => {
               leftAction={() => { navigation.goBack() }}
               leftIcon={icons.back}
   */
-  
+
   return (
     <>
       {loading ? <Text>Loading...</Text> :
@@ -94,7 +94,7 @@ export const RecipeScreen = ({ navigation }: NavigationInjectedProps) => {
               rightAction={() => { navigation.goBack() }}
               rightIcon={menu} />
             <Modal isOpen={modalOpen} position={"bottom"} onClosed={() => setModalOpen(!modalOpen)} swipeArea={500}>
-              <Steps steps={recipe && recipe.step} recipeId={recipeId.id} navigation={navigation} userId={recipe.user.id} />
+              <Steps steps={recipe && recipe.steps} recipeId={recipeId.id} navigation={navigation} userId={recipe.user.id} />
             </Modal>
             <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colours.primary} />}>
               <DescriptionContainer onPress={() => setExpanded(!expanded)} style={{ height: expanded ? 'auto' : 55 }}>

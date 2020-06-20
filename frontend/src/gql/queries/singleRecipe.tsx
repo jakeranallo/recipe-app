@@ -14,15 +14,19 @@ const SingleRecipeQuery = gql`
       }
       ingredients {
         id
-        category
+        category {
+          name
+        }
         name
         amount
       }
-      step {
+      steps {
         id
         src
         title
         description
+        duration
+        notify
       }
       user {
         id

@@ -42,7 +42,7 @@ model Resource {
 
 model Step {
   description String?
-  duration    String?
+  duration    Int?
   id          Int        @default(autoincrement()) @id
   recipeId    Int?
   src         String?
