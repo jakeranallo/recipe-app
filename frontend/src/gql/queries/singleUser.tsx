@@ -4,8 +4,7 @@ const SingleUserQuery = gql`
   query singleUser($userId: Int) {
     singleUser(userId: $userId) {
       id
-      firstName
-      lastName
+      userName
       avatar
       recipes {
         id

@@ -9,7 +9,6 @@ type AuthPayload {
 
 type Ingredient {
   amount: String
-  category: IngredientCategory
   categoryId: Int
   id: Int!
   name: String!
@@ -29,7 +28,7 @@ input IngredientCategoryCreateManyWithoutRecipeInput {
 }
 
 input IngredientCategoryCreateWithoutRecipeInput {
-  ingredients: IngredientCreateManyWithoutCategoryInput
+  ingredients: IngredientCreateManyWithoutIngredientCategoryInput
   name: String!
 }
 
@@ -37,12 +36,12 @@ input IngredientCategoryWhereUniqueInput {
   id: Int
 }
 
-input IngredientCreateManyWithoutCategoryInput {
+input IngredientCreateManyWithoutIngredientCategoryInput {
   connect: [IngredientWhereUniqueInput!]
-  create: [IngredientCreateWithoutCategoryInput!]
+  create: [IngredientCreateWithoutIngredientCategoryInput!]
 }
 
-input IngredientCreateWithoutCategoryInput {
+input IngredientCreateWithoutIngredientCategoryInput {
   amount: String
   name: String!
 }
@@ -223,7 +222,7 @@ type User {
   id: Int!
   recipes: [Recipe!]!
   results: [Result!]!
-  userName: String!
+  userName: String
 }
 
 input UserCreateOneWithoutRecipesInput {
@@ -241,7 +240,7 @@ input UserCreateWithoutRecipesInput {
   email: String!
   password: String
   results: ResultCreateManyWithoutUserInput
-  userName: String!
+  userName: String
 }
 
 input UserCreateWithoutResultsInput {
@@ -249,10 +248,11 @@ input UserCreateWithoutResultsInput {
   email: String!
   password: String
   recipes: RecipeCreateManyWithoutUserInput
-  userName: String!
+  userName: String
 }
 
 input UserWhereUniqueInput {
   email: String
   id: Int
+  userName: String
 }

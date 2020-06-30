@@ -84,9 +84,9 @@ export const ProfileSection = ({ navigation }: NavigationInjectedProps) => {
                   />
                 </View>
                 <View>
-                  <SmallParagraph>{user.firstName} {user.lastName}</SmallParagraph>
+                  <SmallParagraph>{user.userName}</SmallParagraph>
                   <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <HeadlineTwo color={colours.primary}>Visit {user.firstName}'s YouTube</HeadlineTwo>
+                    <HeadlineTwo color={colours.primary}>Visit {user.userName}'s YouTube</HeadlineTwo>
                     <SvgXml style={{ marginLeft: 8 }} xml={icons.arrowBeige} />
                   </TouchableOpacity>
                 </View>
@@ -239,8 +239,6 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
   const onImgLoad = () => {
     setDuration(count => count = 10000)
   };
-
-  console.log(paused)
 
   return (
     <View>

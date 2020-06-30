@@ -30,7 +30,7 @@ export const ProfileScreen = ({ navigation }: NavigationInjectedProps) => {
         error ? <Text>{error.message}</Text> : user &&
           <>
             <Header
-              title={`${user.firstName} ${user.lastName}`}
+              title={user.userName}
               leftAction={() => { navigation.goBack() }}
               leftIcon={icons.back}
               rightAction={() => { navigation.goBack() }}

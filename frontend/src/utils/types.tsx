@@ -42,9 +42,8 @@ export interface Ingredient {
 export interface User {
   avatar?: string
   email: string
-  firstName: string
+  userName: string
   id: number
-  lastName: string
   results: Result[]
   recipes: Recipe[]
 }
