@@ -43,12 +43,11 @@ model Resource {
 model User {
   avatar    String?
   email     String   @unique
-  firstName String
   id        Int      @default(autoincrement()) @id
-  lastName  String
-  userName  String?
+  userName  String   @unique
   results    Result[]
   recipes    Recipe[]
+  password   String @default("")
 }
 
 model Step {

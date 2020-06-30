@@ -2,6 +2,11 @@
 ### Do not make changes to this file directly
 
 
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
 type Ingredient {
   amount: String
   category: IngredientCategory
@@ -49,13 +54,15 @@ input IngredientWhereUniqueInput {
 type Mutation {
   createOneResult(data: ResultCreateInput!): Result!
   createResult(img: String!, recipeId: Int, userId: Int): Result!
-  signupUser(data: UserCreateInput!): User!
+  login(email: String!, password: String!): AuthPayload!
+  signup(email: String!, password: String!, userName: String!): AuthPayload!
   updateRecipe(id: Int): Recipe
 }
 
 type Query {
   allUsers: [User!]!
   difficultyFeed(filter: String): [Recipe!]!
+  me: User
   recipe(where: RecipeWhereUniqueInput!): Recipe
   searchRecipes(searchString: String): [Recipe!]!
   singleRecipe(recipeId: Int): [Recipe!]!
@@ -213,22 +220,10 @@ input StepWhereUniqueInput {
 type User {
   avatar: String
   email: String!
-  firstName: String!
   id: Int!
-  lastName: String!
   recipes: [Recipe!]!
   results: [Result!]!
-  userName: String
-}
-
-input UserCreateInput {
-  avatar: String
-  email: String!
-  firstName: String!
-  lastName: String!
-  recipes: RecipeCreateManyWithoutUserInput
-  results: ResultCreateManyWithoutUserInput
-  userName: String
+  userName: String!
 }
 
 input UserCreateOneWithoutRecipesInput {
@@ -244,19 +239,17 @@ input UserCreateOneWithoutResultsInput {
 input UserCreateWithoutRecipesInput {
   avatar: String
   email: String!
-  firstName: String!
-  lastName: String!
+  password: String
   results: ResultCreateManyWithoutUserInput
-  userName: String
+  userName: String!
 }
 
 input UserCreateWithoutResultsInput {
   avatar: String
   email: String!
-  firstName: String!
-  lastName: String!
+  password: String
   recipes: RecipeCreateManyWithoutUserInput
-  userName: String
+  userName: String!
 }
 
 input UserWhereUniqueInput {
