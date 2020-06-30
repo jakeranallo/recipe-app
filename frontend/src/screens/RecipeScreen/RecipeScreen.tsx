@@ -75,13 +75,6 @@ export const RecipeScreen = ({ navigation }: NavigationInjectedProps) => {
 
   const [modalOpen, setModalOpen] = React.useState(false);
 
-  /*
-              <Header
-              title="Share Your Result"
-              leftAction={() => { navigation.goBack() }}
-              leftIcon={icons.back}
-  */
-
   return (
     <>
       {loading ? <Text>Loading...</Text> :

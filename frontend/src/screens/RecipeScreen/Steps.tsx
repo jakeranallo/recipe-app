@@ -207,6 +207,7 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [count, setCount] = React.useState(0);
   const [duration, setDuration] = React.useState(10000);
+  const [paused, setPaused] = React.useState(false);
 
   const getDuration = (duration: number) => {
     const momentDuration = moment.duration(duration);
@@ -218,6 +219,7 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
   }
 
   React.useEffect(() => {
+    setPaused(false)
     setCount(count => count = 0)
   }, [activeStep]);
 
@@ -226,17 +228,20 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
     const intervalId = setInterval(() => {
       setCount(count + 100);
     }, 100);
+    if (paused) { clearInterval(intervalId); }
     return () => clearInterval(intervalId);
-  }, [count]);
+  }, [count, paused]);
 
   const onVideoLoad = (data) => {
     setDuration(count => count = (data.durationMillis - 600))
   };
-  
-  const onImgLoad = (data) => {
+
+  const onImgLoad = () => {
     setDuration(count => count = 10000)
   };
-  
+
+  console.log(paused)
+
   return (
     <View>
       <Modal style={{ height: 'auto' }} isOpen={modalOpen} position={"bottom"} onClosed={() => setModalOpen(!modalOpen)}>
@@ -246,15 +251,20 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
         <View style={{ backgroundColor: colours.secondary }}>
           <ScrollView style={{ height: '100%' }}>
             <HiddenButton
-              onPress={() => activeStep === 0 ? null : setActiveStep(activeStep - 1)}>
+              onPress={() => activeStep === 0 ? null : setActiveStep(activeStep - 1)}
+              onLongPress={() => setPaused(true)}
+              onPressOut={() => setPaused(false)}
+            >
             </HiddenButton>
             <HiddenButton
               onPress={() => setActiveStep(activeStep + 1)}
               style={{ left: '50%' }}
+              onLongPress={() => setPaused(true)}
+              onPressOut={() => setPaused(false)}
             >
             </HiddenButton>
             {step && step.src.split('.').pop() === ('mp4') ?
-              < Video
+              <Video
                 source={{ uri: step.src }}
                 shouldPlay
                 isLooping
@@ -271,7 +281,7 @@ export const Steps = ({ steps, recipeId, navigation, userId }: ISteps) => {
                 {step.notify === 1 &&
                   <>
                     <HeadlineTwo color={colours.primary}>{step ? getDuration(step.duration) : 0}</HeadlineTwo>
-                    <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={() => setPaused(!paused)} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                       <HeadlineTwo color={colours.primary}>Notify Me</HeadlineTwo>
                       <SvgXml style={{ marginLeft: 8 }} xml={icons.arrowBeige} />
                     </TouchableOpacity>

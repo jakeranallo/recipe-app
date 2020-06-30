@@ -12,6 +12,9 @@
     ],
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "facebookScheme": "fb3053194844729001",
+    "facebookAppId": "3053194844729001",
+    "facebookDisplayName": "Knead"
   }
 }
